@@ -7,6 +7,13 @@ tokens.txt
 logs.log
 __pycache__
 websockets
+*.gcda
+*.gcno
+tests_*
+CMakeLists.txt
+cmake-build-debug
+err
+out
 
 # Compiled Object files
 *.slo
@@ -39,4 +46,5 @@ websockets
 *.app
 build
 
-__BINARY_NAME__
+myteams_cli
+myteams_server

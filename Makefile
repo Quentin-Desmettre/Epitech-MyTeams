@@ -9,20 +9,20 @@ rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
 SOURCEDIR = src
 
-SRC = $(call rwildc,$(SOURCEDIR),*__FILE_TYPE__)
+SRC = $(call rwildc,$(SOURCEDIR),*.c)
 
-__COMPILER_TYPE__ = __COMPILER__
+CC = gcc
 
-OBJ = $(SRC:__FILE_TYPE__=.o)
+OBJ = $(SRC:.c=.o)
 
-NAME = __BINARY_NAME__
+NAME = myteams
 
-__COMPILER_TYPE_FLAGS__ = __COMPILER_FLAGS__
+CFLAGS = -Wall -Wextra -I ./include
 
 all: $(NAME)
 
 $(NAME):   $(OBJ)
-	__COMPILER__ -o $(NAME) $(OBJ) $(__COMPILER_TYPE_FLAGS__)
+	gcc -o $(NAME) $(OBJ) $(CFLAGS)
 
 tests_run:
 	cd tests && make && ./tests

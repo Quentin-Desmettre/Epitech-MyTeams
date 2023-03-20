@@ -122,13 +122,7 @@ def setupGitignore(variables):
         exit(84)
     print(GREEN_BOLD_ON + ".gitignore setup successfully." + COLOR_OFF)
 
-def setupHooks(variables):
-    if os.system(f"cp {variables['__CHECKER_SCRIPT__']} ./.git/hooks/pre-push") != 0 or os.system("chmod +x ./.git/hooks/pre-push") != 0:
-        print(RED_BOLD_ON + "Cannot setup pre-push hook.")
-        print(COLOR_OFF)
-        exit(84)
-    print(GREEN_BOLD_ON + "Pre-push hook setup successfully." + COLOR_OFF)
-
+def setupHooks():
     # Setup commit-msg hook (copy ./.github/commit_msg.sh to ./.git/hooks/commit-msg and chmod +x)
     if os.system("cp ./.github/commit_msg.sh ./.git/hooks/commit-msg") != 0 or os.system("chmod +x ./.git/hooks/commit-msg") != 0:
         print(RED_BOLD_ON + "Cannot setup commit-msg hook.")
@@ -157,7 +151,7 @@ def main():
         setupGitignore(variables)
 
     # Setup pre-push hook (copy ./.github/c_checker.py to ./.git/hooks/pre-push, or ./.github/cpp_checker.py and chmod +x)
-    setupHooks(variables)
+    setupHooks()
     print(GREEN_BOLD_ON + "\nSetup completed successfully.\n" + COLOR_OFF)
 
 if __name__ == "__main__":
