@@ -7,33 +7,49 @@
 
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
-SOURCEDIR = src
+SOURCEDIR_SERVER = server
+SOURCEDIR_CLIENT = client
 
-SRC = $(call rwildc,$(SOURCEDIR),*.c)
+SRC_SERVER = $(call rwildc,$(SOURCEDIR_SERVER),*.c)
+SRC_CLIENT = $(call rwildc,$(SOURCEDIR_CLIENT),*.c)
+
+CLIENT_NAME = myteams_cli
+SERVER_NAME = myteams_server
 
 CC = gcc
 
-OBJ = $(SRC:.c=.o)
-
-NAME = myteams
+OBJ_SERVER = $(SRC_SERVER:.c=.o)
+OBJ_CLIENT = $(SRC_CLIENT:.c=.o)
 
 CFLAGS = -Wall -Wextra -I ./include
 
-all: $(NAME)
+all:   $(OBJ_SERVER) $(OBJ_CLIENT)
+	$(CC) -o $(CLIENT_NAME) $(OBJ_CLIENT) $(CFLAGS)
+	$(CC) -o $(SERVER_NAME) $(OBJ_SERVER) $(CFLAGS)
 
-$(NAME):   $(OBJ)
-	gcc -o $(NAME) $(OBJ) $(CFLAGS)
+client: $(OBJ_CLIENT)
+	$(CC) -o $(CLIENT_NAME) $(OBJ_CLIENT) $(CFLAGS)
+
+server: $(OBJ_SERVER)
+	$(CC) -o $(SERVER_NAME) $(OBJ_SERVER) $(CFLAGS)
 
 tests_run:
 	cd tests && make && ./tests
 
-clean:
-	rm -f $(OBJ)
-	find . -name "vgcore.*" -delete
-	find . -name "*~" -delete
-	find . -name "\#*" -delete
+clean-client:
+	rm -f $(OBJ_CLIENT)
+clean-server:
+	rm -f $(OBJ_SERVER)
+clean:   clean-client clean-server
 
-fclean:    clean
-	rm -f $(NAME)
+fclean-client: clean-client
+	rm -f $(CLIENT_NAME)
+
+fclean-server: clean-server
+	rm -f $(SERVER_NAME)
+fclean:    fclean-client fclean-server
+
 
 re:        fclean all
+re-client: fclean client
+re-server: fclean server
