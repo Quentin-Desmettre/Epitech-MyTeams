@@ -1,0 +1,106 @@
+/*
+** EPITECH PROJECT, 2022
+** Epitech-Template
+** File description:
+** main.c
+*/
+
+#include "myteams.h"
+
+void accept_client(server_t *server)
+{
+    int fd = accept(server->fd, NULL, NULL);
+    int nfd = server->nb_client;
+    user_t *user;
+
+    if (fd == -1)
+        return;
+    server->client_fds = realloc(server->client_fds, sizeof(int) * (nfd + 1));
+    server->client_fds[nfd] = fd;
+    server->nb_client++;
+    user = create_user(fd);
+    map_add(server->users, MCAST fd, user);
+}
+
+char **get_request_arguments(void *request, size_t buf_size, int nb_args)
+{
+    char **args = NULL;
+    int offset = 0;
+    char *arg;
+    uint16_t arg_len;
+
+    for (int i = 0; i < nb_args; i++) {
+        arg_len = *(uint16_t *)(request + 9 + offset);
+        if (arg_len > buf_size - 11 - offset) {
+            free(args);
+            return NULL;
+        }
+        arg = malloc(arg_len + 1);
+        memcpy(arg, request + 11 + offset, arg_len);
+        arg[arg_len] = 0;
+        append_str_array(&args, arg);
+        offset += arg_len;
+    }
+    return args;
+}
+
+void handle_request(server_t *server, user_t *client)
+{
+    uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
+    char **args = NULL;
+    const command_handler_t *handler;
+
+    if (cmd_id >= NB_COMMANDS)
+        return send_error(client, UnknownCommand, NULL);
+    handler = &COMMANDS[cmd_id];
+    args = get_request_arguments(client->buffer,
+                                client->buf_size, handler->nb_args);
+    if (!args)
+        return send_error(client, UnknownCommand, NULL);
+    if (handler->requires_login && !client->logged_in)
+        return send_error(client, Unauthorized, NULL);
+    handler->handler(server, client, args);
+    free_str_array(args);
+}
+
+void handle_user_input(server_t *server, int fd)
+{
+    int bytes = bytes_available(fd);
+    user_t *client;
+    char *tmp_buf;
+
+    if (bytes < 0)
+        return;
+    if (bytes == 0) {
+        remove_fd_from_array(&server->client_fds, &server->nb_client, fd);
+        return map_remove(server->users, MCAST fd);
+    }
+    client = map_get(server->users, MCAST fd);
+    tmp_buf = malloc(bytes);
+    if (read(fd, tmp_buf, bytes) != bytes)
+        return free(tmp_buf);
+    client->buffer = realloc(client->buffer, client->buf_size + bytes);
+    memcpy(client->buffer + client->buf_size, tmp_buf, bytes);
+    client->buf_size += bytes;
+    free(tmp_buf);
+    if (client->buf_size >= 8 && client->buf_size >= *(size_t *)client->buffer)
+        handle_request(server, client);
+}
+
+int run_server(server_t *server)
+{
+    int fd;
+
+    while (server->run) {
+        fd_data_init(server);
+        if (select(server->fd_data.max_fd + 1, &server->fd_data.read_set,
+            NULL, NULL, NULL) == -1)
+            continue;
+        fd = get_first_input_available(&server->fd_data, server);
+        if (fd == server->fd)
+            accept_client(server);
+        else
+            handle_user_input(server, fd);
+    }
+    return 0;
+}

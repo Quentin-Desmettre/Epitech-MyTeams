@@ -22,6 +22,8 @@ void (*free_value)(void *))
 
 void map_destroy(map_t *map)
 {
+    if (!map)
+        return;
     if (map->free_value)
         for (int i = 0; i < map->size; i++)
             map->free_value(map->elems[i].value);

@@ -8,7 +8,7 @@
 #ifndef EPITECH_MYTEAMS_MAP_H
     #define EPITECH_MYTEAMS_MAP_H
     #include <stdlib.h>
-    #define MCAST(x) ((void *)x)
+    #define MCAST (void *)(long long)
 
 typedef struct map_elem {
     void *key;
@@ -23,8 +23,10 @@ typedef struct map {
     void (*free_value)(void *);
 } map_t;
 
-map_t *map_create(int (*compare)(const void *, const void *),
-                void (*free_value)(void *));
+typedef int (*compare_key_t)(const void *, const void *);
+typedef void (*free_value_t)(void *);
+
+map_t *map_create(compare_key_t compare, free_value_t free_value);
 void map_destroy(map_t *map);
 
 void map_add(map_t *map, void *key, void *value);

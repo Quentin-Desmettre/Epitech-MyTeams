@@ -6,9 +6,17 @@
 */
 
 #include <stdio.h>
+#include "myteams.h"
 
-int main(void)
+int main(int ac, char **av)
 {
-    printf("Hello World!\n");
-    return (0);
+    int port = get_port(ac, av);
+    server_t *serv = (port >= 0 ? init_server(port) : NULL);
+    int rval;
+
+    if (serv == NULL)
+        return (ac == 2 && !strcmp(av[1], "-help")) ? 0 : 84;
+    rval = run_server(serv);
+    destroy_server(serv);
+    return (rval);
 }
