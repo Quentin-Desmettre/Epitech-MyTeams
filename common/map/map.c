@@ -8,7 +8,7 @@
 #include "map.h"
 
 map_t *map_create(int (*compare)(const void *, const void *),
-                  void (*free_value)(void *))
+void (*free_value)(void *))
 {
     map_t *map = malloc(sizeof(map_t));
 
