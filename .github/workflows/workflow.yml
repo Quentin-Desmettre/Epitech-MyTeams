@@ -8,10 +8,7 @@
 # The goal of this workflow is to merge the remote branch into the Epitech remote, but only if the tests pass.
 
 name: "Push to remote"
-on:
-  push:
-    branches:
-      - '*'
+on: push
 
 jobs:
   test:
