@@ -1,0 +1,93 @@
+##
+## EPITECH PROJECT, 2022
+## Epitech-Template
+## File description:
+## workflow.yml
+##
+
+# The goal of this workflow is to merge the remote branch into the Epitech remote, but only if the tests pass.
+
+name: "Push to remote"
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    name: Run tests before pushing to remote
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.extract_branch.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Run push hooks
+        run: "pip install websocket-client && python '__CHECKER_SCRIPT__' --hard"
+
+      - name: Check if it compiles
+        shell: bash
+        run: |
+          make
+          make clean
+          make fclean
+          make re
+          [ "$(make)" == "make: Nothing to be done for 'all'." ]
+
+      - name: Run tests (functional and unit)
+        run: "make tests_run"
+
+  deploy:
+    name: Deploy to Epitech repo
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.extract_branch.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
+          END
+
+        env:
+          SSH_USER: ${{ secrets.STAGING_SSH_USER }}
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+
+      - name: Push to Epitech
+        shell: bash
+        run: |
+          DIRNAME=githubActions/$(basename $GITHUB_REPOSITORY)
+          BRANCH=${{ steps.extract_branch.outputs.branch }}
+          ssh staging "rm -rf $DIRNAME && cd githubActions && git clone 'git@github.com:$GITHUB_REPOSITORY.git'"
+          ssh staging "cd $DIRNAME && git checkout $BRANCH && git pull"
+          ssh staging "cd $DIRNAME && git config --global user.name 'Github Pipeline' && git config --global user.email 'quentin.desmettre@epitech.eu'"
+          ssh staging "cd $DIRNAME && (git remote rm epiRepo || true)"
+          ssh staging "cd $DIRNAME && git remote add epiRepo '__REMOTE_URL__'"
+          ssh staging "cd $DIRNAME && (git fetch --unshallow || true) && git fetch --all && git fetch epiRepo && git fetch epiRepo $BRANCH"
+          ssh staging "cd $DIRNAME && git push epiRepo $BRANCH -f"
