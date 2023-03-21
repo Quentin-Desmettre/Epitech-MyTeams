@@ -5,7 +5,7 @@
 ** errors
 */
 
-#include "myteams.h"
+#include "server.h"
 
 void send_error(user_t *client, uint8_t code, const char *msg)
 {

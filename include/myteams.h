@@ -141,61 +141,9 @@ enum COMMANDS {
     NB_COMMANDS
 };
 
-typedef struct {
-    bool requires_login;
-    int nb_args;
-    void (*handler)(server_t *server, user_t *user, char **args);
-} command_handler_t;
-
-static void help_handler(server_t *server, user_t *user, char **args) {}
-static void login_handler(server_t *server, user_t *user, char **args) {}
-static void logout_handler(server_t *server, user_t *user, char **args) {}
-static void users_handler(server_t *server, user_t *user, char **args) {}
-static void user_handler(server_t *server, user_t *user, char **args) {}
-static void send_handler(server_t *server, user_t *user, char **args) {}
-static void messages_handler(server_t *server, user_t *user, char **args) {}
-static void subscribe_handler(server_t *server, user_t *user, char **args) {}
-static void subscribed_handler(server_t *server, user_t *user, char **args) {}
-static void unsubscribe_handler(server_t *server, user_t *user, char **args) {}
-static void use_handler(server_t *server, user_t *user, char **args) {}
-static void create_handler(server_t *server, user_t *user, char **args) {}
-static void list_handler(server_t *server, user_t *user, char **args) {}
-static void info_handler(server_t *server, user_t *user, char **args) {}
-
-UNUSED static const command_handler_t COMMANDS[] = {
-        {false, 0, &help_handler}, // HELP
-        {false, 2, &login_handler}, // LOGIN
-        {true, 0, &logout_handler}, // LOGOUT
-        {true, 0, &users_handler}, // USERS
-        {true, 1, &user_handler}, // USER
-        {true, 2, &send_handler}, // SEND
-        {true, 0, &messages_handler}, // MESSAGES
-        {true, 1, &subscribe_handler}, // SUBSCRIBE
-        {true, 0, &subscribed_handler}, // SUBSCRIBED
-        {true, 1, &unsubscribe_handler}, // UNSUBSCRIBE
-        {true, 1, &use_handler}, // USE
-        {true, 3, &create_handler}, // CREATE
-        {true, 0, &list_handler}, // LIST
-        {true, 1, &info_handler} // INFO
-};
-
-// Server
-int get_port(int ac, char **av);
-server_t *init_server(int port); // Creates a socket, bind, listen
-void destroy_server(server_t *server);
-int run_server(server_t *server); // Call create_client, read_client, disconnect_client
-//void save_server(server_t *server);
-//void restore_server(server_t *server);
-void accept_client(server_t *server);
-
-
 // Client
 user_t *create_user(int fd);
 void free_user(user_t *user);
-void handle_user_input(server_t *server, int fd);
-
-// Teams
-static void free_team(team_t *team) {}
 
 // Utility
 int uuid_compare(const void *a, const void *b);
@@ -203,14 +151,5 @@ int int_compare(const void *a, const void *b);
 int bytes_available(int fd);
 void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
-
-// Responses
-void send_error(user_t *client, uint8_t code, const char *message);
-
-
-// Fd sets
-void fd_data_init(server_t *server);
-int get_first_input_available(fd_data_t *data, server_t *server);
-void remove_fd_from_array(int **array, int *len, int fd);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

@@ -5,7 +5,7 @@
 ** fd_data.c
 */
 
-#include "myteams.h"
+#include "server.h"
 
 void fd_data_init(server_t *server)
 {

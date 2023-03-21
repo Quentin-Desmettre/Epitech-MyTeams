@@ -5,7 +5,7 @@
 ** main.c
 */
 
-#include "myteams.h"
+#include "server.h"
 
 static void print_usage(void)
 {

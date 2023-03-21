@@ -5,7 +5,7 @@
 ** main.c
 */
 
-#include "myteams.h"
+#include "server.h"
 
 void accept_client(server_t *server)
 {
