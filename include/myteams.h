@@ -114,5 +114,6 @@ int int_compare(const void *a, const void *b);
 int bytes_available(int fd);
 void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
+void *memdup(void *src, size_t size);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

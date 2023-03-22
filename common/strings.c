@@ -36,12 +36,10 @@ void free_str_array(char **array)
     free(array);
 }
 
-int int_compare(const void *a, const void *b)
+void *memdup(void *src, size_t size)
 {
-    return *(int *)a == *(int *)b;
-}
+    void *dst = malloc(size);
 
-int uuid_compare(const void *a, const void *b)
-{
-    return memcmp(a, b, 16);
+    memcpy(dst, src, size);
+    return (dst);
 }

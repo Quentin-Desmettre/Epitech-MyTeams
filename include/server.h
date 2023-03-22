@@ -43,7 +43,8 @@ typedef struct server {
 
     map_t *teams;      // <== Maps uuid_team -> team_t
 
-    map_t *clients;      // <== Maps fd -> client_t
+    map_t *clients_by_fd;        // <== Maps fd -> client_t
+    map_t *clients_by_uuid;      // <== Maps uuid -> client_t
     map_t *users_by_uuid;        // <== Maps uuid_user -> user_t
     map_t *users_by_name;        // <== Maps name_user -> user_t
     map_t *messages;   // <== Maps "uuid_user1-uuid_user2" -> list of messages
@@ -101,6 +102,8 @@ void accept_client(server_t *server);
 // Client
 void handle_client_input(server_t *server, int fd);
 void free_client(client_t *client);
+void disconnect_client(server_t *server, int fd);
+
 // Teams
 void free_team(team_t *team);
 void free_message_list(list_t *messages);

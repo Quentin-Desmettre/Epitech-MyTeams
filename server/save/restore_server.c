@@ -13,16 +13,16 @@ static void restore_thread(channel_t *channel, int file)
     thread_message_t *message;
     int nb_replies = 0;
 
-    read(file, &thread->uuid, sizeof(thread->uuid));
-    read(file, &thread->title, sizeof(thread->title));
-    read(file, &thread->message, sizeof(thread->message));
+    read(file, thread->uuid, sizeof(thread->uuid));
+    read(file, thread->title, sizeof(thread->title));
+    read(file, thread->message, sizeof(thread->message));
     read(file, &thread->timestamp, sizeof(time_t));
     read(file, &nb_replies, sizeof(int));
     thread->replies = NULL;
     for (int i = 0; i < nb_replies; i++) {
         message = malloc(sizeof(thread_message_t));
-        read(file, &message->uuid_sender, sizeof(message->uuid_sender));
-        read(file, &message->content, sizeof(message->content));
+        read(file, message->uuid_sender, sizeof(message->uuid_sender));
+        read(file, message->content, sizeof(message->content));
         read(file, &message->timestamp, sizeof(time_t));
         append_node(&thread->replies, message);
     }
@@ -34,8 +34,8 @@ static void restore_channel(team_t *team, int file)
     channel_t *channel = malloc(sizeof(channel_t));
     int nb_threads;
 
-    read(file, &channel->uuid, sizeof(channel->uuid));
-    read(file, &channel->name, sizeof(channel->name));
+    read(file, channel->uuid, sizeof(channel->uuid));
+    read(file, channel->name, sizeof(channel->name));
     read(file, &channel->description, sizeof(channel->description));
     read(file, &nb_threads, sizeof(int));
     channel->threads = map_create(uuid_compare, free_thread);
@@ -51,9 +51,9 @@ static void restore_team(server_t *server, int file)
     int subscribed_users;
     char uuid[sizeof(team->uuid)];
 
-    read(file, &team->uuid, sizeof(team->uuid));
-    read(file, &team->name, sizeof(team->name));
-    read(file, &team->description, sizeof(team->description));
+    read(file, team->uuid, sizeof(team->uuid));
+    read(file, team->name, sizeof(team->name));
+    read(file, team->description, sizeof(team->description));
     read(file, &nb_channels, sizeof(int));
     team->channels = map_create(uuid_compare, (free_value_t)free_channel);
     for (int i = 0; i < nb_channels; i++)
@@ -61,8 +61,8 @@ static void restore_team(server_t *server, int file)
     read(file, &subscribed_users, sizeof(int));
     team->users = NULL;
     for (int i = 0; i < subscribed_users; i++) {
-        read(file, &uuid, sizeof(uuid));
-        append_node(&team->users, map_get(server->users_by_uuid, uuid));
+        read(file, uuid, sizeof(uuid));
+        append_node(&team->users, memdup(uuid, sizeof(uuid)));
     }
     map_add(server->teams, team->uuid, team);
 }

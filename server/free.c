@@ -19,15 +19,18 @@ void free_message_list(list_t *messages)
     free_list(&messages, free);
 }
 
-// TODO: free team, thread, channel
 void free_team(team_t *team)
 {
-}
-
-void free_thread(void *th)
-{
+    free_list(&team->users, free);
+    map_destroy(team->channels);
 }
 
 void free_channel(void *ch)
 {
+    map_destroy(((channel_t *)ch)->threads);
+}
+
+void free_thread(void *th)
+{
+    free_list(&((thread_t *)th)->replies, free);
 }

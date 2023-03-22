@@ -20,7 +20,7 @@ void accept_client(server_t *server)
     server->nb_client++;
     client = calloc(sizeof(client_t), 1);
     client->fd = fd;
-    map_add(server->clients, MCAST fd, client);
+    map_add(server->clients_by_fd, MCAST fd, client);
 }
 
 char **get_request_arguments(void *request, size_t buf_size, int nb_args)
@@ -72,11 +72,9 @@ void handle_client_input(server_t *server, int fd)
 
     if (bytes < 0)
         return;
-    if (bytes == 0) {
-        remove_fd_from_array(&server->client_fds, &server->nb_client, fd);
-        return map_remove(server->clients, MCAST fd);
-    }
-    client = map_get(server->clients, MCAST fd);
+    if (bytes == 0)
+        return disconnect_client(server, fd);
+    client = map_get(server->clients_by_fd, MCAST fd);
     tmp_buf = malloc(bytes);
     if (read(fd, tmp_buf, bytes) != bytes)
         return free(tmp_buf);

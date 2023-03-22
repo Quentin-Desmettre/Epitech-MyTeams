@@ -7,6 +7,15 @@
 
 #include "server.h"
 
+void disconnect_client(server_t *server, int fd)
+{
+    client_t *client = map_get(server->clients_by_fd, MCAST fd);
+
+    remove_fd_from_array(&server->client_fds, &server->nb_client, fd);
+    map_remove(server->clients_by_uuid, MCAST client->user->uuid);
+    map_remove(server->clients_by_fd, MCAST fd);
+}
+
 void fd_data_init(server_t *server)
 {
     fd_data_t data = {0};

@@ -50,7 +50,7 @@ static void save_team(team_t *team, int file)
     write(file, &subscribed_users, sizeof(int));
     elem = team->users;
     for (int i = 0; i < subscribed_users; i++) {
-        write(file, ((user_t *)elem->data)->uuid, 16);
+        write(file, elem->data, sizeof(team->uuid));
         elem = elem->next;
     }
 }
