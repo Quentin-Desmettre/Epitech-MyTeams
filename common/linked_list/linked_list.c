@@ -54,3 +54,23 @@ void free_list(list_t **list, void (*freer)(void *))
     while (*list)
         remove_node(list, 0, freer);
 }
+
+int list_size(list_t *list)
+{
+    int size = 0;
+    list_t *s = list;
+
+    if (!s)
+        return 0;
+    do {
+        size++;
+        s = s->next;
+    } while (s != list);
+    return size;
+}
+
+void push_to_front(list_t **begin, void *data)
+{
+    append_node(begin, data);
+    *begin = (*begin)->prev;
+}

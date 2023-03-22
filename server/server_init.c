@@ -65,10 +65,12 @@ server_t *init_server(int port)
         destroy_server(serv);
         return (NULL);
     }
-    serv->users = map_create(int_compare, (free_value_t)free_user);
+    serv->clients = map_create(int_compare, (free_value_t)free_client);
+    serv->users_by_uuid = map_create(uuid_compare, free);
+    serv->users_by_name = map_create((compare_key_t)strcmp, NULL);
     serv->teams = map_create((compare_key_t)strcmp, (free_value_t)free_team);
     serv->messages = map_create((compare_key_t)strcmp,
-                                (free_value_t)free_team);
+                                (free_value_t)free_message_list);
     serv->run = true;
     return (serv);
 }
@@ -77,7 +79,7 @@ void destroy_server(server_t *serv)
 {
     if (serv->fd != -1)
         close(serv->fd);
-    map_destroy(serv->users);
+    map_destroy(serv->clients);
     map_destroy(serv->teams);
     map_destroy(serv->messages);
     free(serv->client_fds);

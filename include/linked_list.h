@@ -17,5 +17,7 @@ typedef struct list {
 void append_node(list_t **list, void *data);
 void remove_node(list_t **list, int index, void (*free_data)(void *));
 void free_list(list_t **list, void (*free_data)(void *));
+int list_size(list_t *list);
+void push_to_front(list_t **begin, void *data);
 
 #endif /* !LINKED_LIST_H_ */

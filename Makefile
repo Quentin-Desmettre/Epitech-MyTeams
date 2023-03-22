@@ -7,12 +7,12 @@
 
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
-SOURCEDIR_SERVER = server
-SOURCEDIR_CLIENT = client
-SOURCEDIR_COMMON = common
+SRCDIR_SERVER = server
+SRCDIR_CLIENT = client
+SRC_COM = common
 
-SRC_SERVER = $(call rwildc,$(SOURCEDIR_SERVER),*.c) $(call rwildc,$(SOURCEDIR_COMMON),*.c)
-SRC_CLIENT = $(call rwildc,$(SOURCEDIR_CLIENT),*.c) $(call rwildc,$(SOURCEDIR_COMMON),*.c)
+SRC_SERVER = $(call rwildc,$(SRCDIR_SERVER),*.c) $(call rwildc,$(SRC_COM),*.c)
+SRC_CLIENT = $(call rwildc,$(SRCDIR_CLIENT),*.c) $(call rwildc,$(SRC_COM),*.c)
 
 CLIENT_NAME = myteams_cli
 SERVER_NAME = myteams_server

@@ -7,10 +7,10 @@
 
 #include "server.h"
 
-void login_handler(server_t *server, user_t *user, char **args)
+void login_handler(server_t *server, client_t *user, char **args)
 {
 }
 
-void logout_handler(server_t *server, user_t *user, char **args)
+void logout_handler(server_t *server, client_t *user, char **args)
 {
 }

@@ -40,7 +40,7 @@ typedef struct team {
     char name[MAX_NAME_LENGTH + 1];
     char description[MAX_DESCRIPTION_LENGTH + 1];
     map_t *channels; // <== Maps uuid_channel -> channel_t
-    list_t *users;
+    list_t *users; // <== List of uuid_user
 } team_t;
 
 typedef struct channel {
@@ -60,9 +60,8 @@ typedef struct thread {
 
 typedef struct thread_message {
     char uuid_sender[UUID_LENGTH];
-    char uuid_receiver[UUID_LENGTH];
-    time_t timestamp;
     char content[MAX_BODY_LENGTH + 1];
+    time_t timestamp;
 } thread_message_t;
 
 typedef struct user_context {
@@ -71,44 +70,12 @@ typedef struct user_context {
     thread_t *thread;
 } user_context_t;
 
-typedef struct user {
-    int fd;
-    bool logged_in;
-
-    char uuid[UUID_LENGTH];
-    char name[MAX_NAME_LENGTH + 1];
-    user_context_t context;
-
-    void *buffer;
-    size_t buf_size;
-} user_t;
-
 typedef struct message {
     char uuid_sender[UUID_LENGTH];
     char uuid_receiver[UUID_LENGTH];
     time_t timestamp;
     char content[MAX_BODY_LENGTH + 1];
 } user_message_t;
-
-typedef struct {
-    int max_fd;
-    fd_set read_set;
-    fd_set write_set;
-    fd_set except_set;
-} fd_data_t;
-
-typedef struct server {
-    int fd;
-    bool run;
-    fd_data_t fd_data;
-
-    map_t *teams;      // <== Maps uuid_team -> team_t
-
-    map_t *users;      // <== Maps fd -> user_t
-    map_t *messages;   // <== Maps "uuid_user1-uuid_user2" -> list of messages
-    int *client_fds;
-    int nb_client;
-} server_t;
 
 enum ErrorCode {
     Success,
@@ -140,10 +107,6 @@ enum COMMANDS {
     INFO,
     NB_COMMANDS
 };
-
-// Client
-user_t *create_user(int fd);
-void free_user(user_t *user);
 
 // Utility
 int uuid_compare(const void *a, const void *b);

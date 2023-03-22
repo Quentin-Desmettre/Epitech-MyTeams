@@ -11,15 +11,16 @@ void accept_client(server_t *server)
 {
     int fd = accept(server->fd, NULL, NULL);
     int nfd = server->nb_client;
-    user_t *user;
+    client_t *client;
 
     if (fd == -1)
         return;
     server->client_fds = realloc(server->client_fds, sizeof(int) * (nfd + 1));
     server->client_fds[nfd] = fd;
     server->nb_client++;
-    user = create_user(fd);
-    map_add(server->users, MCAST fd, user);
+    client = calloc(sizeof(client_t), 1);
+    client->fd = fd;
+    map_add(server->clients, MCAST fd, client);
 }
 
 char **get_request_arguments(void *request, size_t buf_size, int nb_args)
@@ -44,7 +45,7 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
     return args;
 }
 
-void handle_request(server_t *server, user_t *client)
+void handle_request(server_t *server, client_t *client)
 {
     uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
     char **args = NULL;
@@ -63,19 +64,19 @@ void handle_request(server_t *server, user_t *client)
     free_str_array(args);
 }
 
-void handle_user_input(server_t *server, int fd)
+void handle_client_input(server_t *server, int fd)
 {
     int bytes = bytes_available(fd);
-    user_t *client;
+    client_t *client;
     char *tmp_buf;
 
     if (bytes < 0)
         return;
     if (bytes == 0) {
         remove_fd_from_array(&server->client_fds, &server->nb_client, fd);
-        return map_remove(server->users, MCAST fd);
+        return map_remove(server->clients, MCAST fd);
     }
-    client = map_get(server->users, MCAST fd);
+    client = map_get(server->clients, MCAST fd);
     tmp_buf = malloc(bytes);
     if (read(fd, tmp_buf, bytes) != bytes)
         return free(tmp_buf);
@@ -100,7 +101,7 @@ int run_server(server_t *server)
         if (fd == server->fd)
             accept_client(server);
         else
-            handle_user_input(server, fd);
+            handle_client_input(server, fd);
     }
     return 0;
 }

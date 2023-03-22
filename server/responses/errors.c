@@ -7,7 +7,7 @@
 
 #include "server.h"
 
-void send_error(user_t *client, uint8_t code, const char *msg)
+void send_error(client_t *client, uint8_t code, const char *msg)
 {
     uint16_t msg_len = msg ? strlen(msg) : 0;
     size_t total_size = 11 + msg_len;
