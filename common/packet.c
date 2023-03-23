@@ -26,14 +26,15 @@ void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
     ((uint64_t *)(*packet))[0] += 2 + arg_len;
 }
 
-void *create_packet(enum responses code, const void **args, int nb_args)
+void *create_packet(enum responses code, const void **args,
+        const int args_lens[], int nb_args)
 {
     void *packet = calloc(11, 1);
 
     ((uint64_t *)packet)[0] = 11;
     ((uint8_t *)packet)[8] = code;
     for (int i = 0; i < nb_args; i++)
-        append_arg_to_packet(&packet, args[i], strlen(args[i]));
+        append_arg_to_packet(&packet, args[i], args_lens[i]);
     return packet;
 }
 

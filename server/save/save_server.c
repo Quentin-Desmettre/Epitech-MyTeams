@@ -55,14 +55,6 @@ static void save_team(team_t *team, int file)
     }
 }
 
-static void save_messages(map_t *messages, int file)
-{
-    write(file, &messages->size, sizeof(int));
-    for (int i = 0; i < messages->size; i++) {
-        write(file, messages->elems[i].value, sizeof(user_message_t));
-    }
-}
-
 void save_server(server_t *server)
 {
     int file = open("server.db", O_WRONLY | O_CREAT | O_TRUNC, 0644);

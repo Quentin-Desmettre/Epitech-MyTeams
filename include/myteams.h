@@ -127,7 +127,7 @@ enum responses {
     U_CHANNEL_CREATED,
     G_THREAD_CREATED,
     U_THREAD_CREATED,
-    LIST_USERS,
+    EV_LIST_USERS,
     LIST_TEAMS,
     LIST_CHANNELS,
     LIST_THREADS,
@@ -140,7 +140,7 @@ enum responses {
     UNAUTHORIZED,
     UNKNOWN_COMMAND,
     ALREADY_EXIST,
-    USER_INFO,
+    EV_USER_INFO,
     TEAM_INFO,
     CHANNEL_INFO,
     THREAD_INFO,
@@ -202,7 +202,8 @@ void generate_uuid(char *uuid);
 // Packet
 bool is_error(enum responses code);
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
-void *create_packet(enum responses code, const void **args, int nb_args);
+void *create_packet(enum responses code, const void **args,
+        const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H
