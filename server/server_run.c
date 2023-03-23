@@ -52,10 +52,12 @@ void handle_request(server_t *server, client_t *client)
     const command_handler_t *handler;
 
     if (cmd_id >= NB_COMMANDS)
-        return send_error(client, UnknownCommand, NULL);
+        return clear_client_buffer(client),
+        send_error(client, UnknownCommand, NULL);
     handler = &COMMANDS[cmd_id];
     args = get_request_arguments(client->buffer,
                                 client->buf_size, handler->nb_args);
+    clear_client_buffer(client);
     if (!args)
         return send_error(client, UnknownCommand, NULL);
     if (handler->requires_login && !client->logged_in)
@@ -98,8 +100,10 @@ int run_server(server_t *server)
         fd = get_first_input_available(&server->fd_data, server);
         if (fd == server->fd)
             accept_client(server);
-        else
+        else {
             handle_client_input(server, fd);
+            save_server(server);
+        }
     }
     return 0;
 }

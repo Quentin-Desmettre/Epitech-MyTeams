@@ -8,6 +8,7 @@
 #ifndef EPITECH_MYTEAMS_SERVER_H
     #define EPITECH_MYTEAMS_SERVER_H
     #include "myteams.h"
+    #include "logging_server.h"
 
 // Client
 typedef struct user {
@@ -25,9 +26,6 @@ typedef struct client {
     void *buffer;
     size_t buf_size;
 } client_t;
-
-user_t *create_user(int fd);
-void free_user(user_t *user);
 
 typedef struct {
     int max_fd;
@@ -103,6 +101,7 @@ void accept_client(server_t *server);
 void handle_client_input(server_t *server, int fd);
 void free_client(client_t *client);
 void disconnect_client(server_t *server, int fd);
+void clear_client_buffer(client_t *client);
 
 // Teams
 void free_team(team_t *team);

@@ -27,6 +27,7 @@
     #include <fcntl.h>
     #include "linked_list.h"
     #include "map.h"
+    #include <uuid/uuid.h>
     #define UNUSED __attribute__((unused))
     #define MAX_CLIENTS 100
     #define MAX_NAME_LENGTH 32
@@ -36,7 +37,7 @@
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct team {
-    char uuid[UUID_LENGTH];
+    char uuid[UUID_LENGTH + 1];
     char name[MAX_NAME_LENGTH + 1];
     char description[MAX_DESCRIPTION_LENGTH + 1];
     map_t *channels; // <== Maps uuid_channel -> channel_t
@@ -44,14 +45,14 @@ typedef struct team {
 } team_t;
 
 typedef struct channel {
-    char uuid[UUID_LENGTH];
+    char uuid[UUID_LENGTH + 1];
     char name[MAX_NAME_LENGTH + 1];
     char description[MAX_DESCRIPTION_LENGTH + 1];
     map_t *threads; // <== Maps uuid_thread -> thread_t
 } channel_t;
 
 typedef struct thread {
-    char uuid[UUID_LENGTH];
+    char uuid[UUID_LENGTH + 1];
     char title[MAX_NAME_LENGTH + 1];
     char message[MAX_BODY_LENGTH + 1];
     time_t timestamp;
@@ -59,7 +60,7 @@ typedef struct thread {
 } thread_t;
 
 typedef struct thread_message {
-    char uuid_sender[UUID_LENGTH];
+    char uuid_sender[UUID_LENGTH + 1];
     char content[MAX_BODY_LENGTH + 1];
     time_t timestamp;
 } thread_message_t;
@@ -71,8 +72,8 @@ typedef struct user_context {
 } user_context_t;
 
 typedef struct message {
-    char uuid_sender[UUID_LENGTH];
-    char uuid_receiver[UUID_LENGTH];
+    char uuid_sender[UUID_LENGTH + 1];
+    char uuid_receiver[UUID_LENGTH + 1];
     time_t timestamp;
     char content[MAX_BODY_LENGTH + 1];
 } user_message_t;
@@ -109,11 +110,11 @@ enum COMMANDS {
 };
 
 // Utility
-int uuid_compare(const void *a, const void *b);
 int int_compare(const void *a, const void *b);
 int bytes_available(int fd);
 void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
 void *memdup(void *src, size_t size);
+void generate_uuid(char *uuid);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

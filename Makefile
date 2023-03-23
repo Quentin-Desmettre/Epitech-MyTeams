@@ -22,7 +22,7 @@ CC = gcc
 OBJ_SERVER = $(SRC_SERVER:.c=.o)
 OBJ_CLIENT = $(SRC_CLIENT:.c=.o)
 
-CFLAGS = -Wall -Wextra -I ./include -L ./libs/myteams -lmyteams
+CFLAGS = -Wall -Wextra -I ./include -I ./libs/myteams -L ./libs/myteams -lmyteams -luuid
 
 all:   $(OBJ_SERVER) $(OBJ_CLIENT)
 	$(CC) -o $(CLIENT_NAME) $(OBJ_CLIENT) $(CFLAGS)

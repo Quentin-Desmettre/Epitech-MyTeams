@@ -6,13 +6,19 @@
 */
 
 #include <string.h>
+#include <uuid/uuid.h>
 
 int int_compare(const void *a, const void *b)
 {
-    return *(int *)a == *(int *)b;
+    return *(int *)a - *(int *)b;
 }
 
-int uuid_compare(const void *a, const void *b)
+void generate_uuid(char uuid[17])
 {
-    return memcmp(a, b, 16);
+    while (1) {
+        uuid_generate((unsigned char*)uuid);
+        if (memchr(uuid, 0, 16) == NULL)
+            break;
+    }
+    uuid[16] = 0;
 }

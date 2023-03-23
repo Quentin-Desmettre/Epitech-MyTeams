@@ -16,6 +16,13 @@ void disconnect_client(server_t *server, int fd)
     map_remove(server->clients_by_fd, MCAST fd);
 }
 
+void clear_client_buffer(client_t *client)
+{
+    free(client->buffer);
+    client->buffer = NULL;
+    client->buf_size = 0;
+}
+
 void fd_data_init(server_t *server)
 {
     fd_data_t data = {0};
