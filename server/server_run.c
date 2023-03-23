@@ -53,15 +53,15 @@ void handle_request(server_t *server, client_t *client)
 
     if (cmd_id >= NB_COMMANDS)
         return clear_client_buffer(client),
-        send_error(client, UnknownCommand, NULL);
+        send_error(client, UNKNOWN_COMMAND, NULL);
     handler = &COMMANDS[cmd_id];
     args = get_request_arguments(client->buffer,
                                 client->buf_size, handler->nb_args);
     clear_client_buffer(client);
     if (!args)
-        return send_error(client, UnknownCommand, NULL);
+        return send_error(client, UNKNOWN_COMMAND, NULL);
     if (handler->requires_login && !client->logged_in)
-        return send_error(client, Unauthorized, NULL);
+        return send_error(client, UNAUTHORIZED, NULL);
     handler->handler(server, client, args);
     free_str_array(args);
 }

@@ -72,20 +72,20 @@ void list_handler(server_t *server, client_t *user, char **args);
 void info_handler(server_t *server, client_t *user, char **args);
 
 UNUSED static const command_handler_t COMMANDS[] = {
-{false, 0, &help_handler}, // HELP
-{false, 2, &login_handler}, // LOGIN
-{true, 0, &logout_handler}, // LOGOUT
-{true, 0, &users_handler}, // USERS
-{true, 1, &user_handler}, // USER
-{true, 2, &send_handler}, // SEND
-{true, 0, &messages_handler}, // MESSAGES
-{true, 1, &subscribe_handler}, // SUBSCRIBE
-{true, 0, &subscribed_handler}, // SUBSCRIBED
-{true, 1, &unsubscribe_handler}, // UNSUBSCRIBE
-{true, 1, &use_handler}, // USE
-{true, 3, &create_handler}, // CREATE
-{true, 0, &list_handler}, // LIST
-{true, 1, &info_handler} // INFO
+        {false, 0, &help_handler}, // HELP
+        {false, 1, &login_handler}, // LOGIN
+        {true, 0, &logout_handler}, // LOGOUT
+        {true, 0, &users_handler}, // USERS
+        {true, 1, &user_handler}, // USER
+        {true, 2, &send_handler}, // SEND
+        {true, 1, &messages_handler}, // MESSAGES
+        {true, 1, &subscribe_handler}, // SUBSCRIBE
+        {true, 1, &subscribed_handler}, // SUBSCRIBED
+        {true, 1, &unsubscribe_handler}, // UNSUBSCRIBE
+        {true, 3, &use_handler}, // USE
+        {true, 2, &create_handler}, // CREATE
+        {true, 0, &list_handler}, // LIST
+        {true, 0, &info_handler} // INFO
 };
 
 // Server

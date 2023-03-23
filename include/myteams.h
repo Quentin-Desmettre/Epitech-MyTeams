@@ -78,18 +78,6 @@ typedef struct message {
     char content[MAX_BODY_LENGTH + 1];
 } user_message_t;
 
-enum ErrorCode {
-    Success,
-    UnknownTeam,
-    UnknownChannel,
-    UnknownThread,
-    UnknownUser,
-    Unauthorized,
-    AlreadyExist,
-    UnknownCommand
-};
-
-
 // Commands
 enum COMMANDS {
     HELP = 0,
@@ -109,6 +97,100 @@ enum COMMANDS {
     NB_COMMANDS
 };
 
+static const int NB_ARGS_FOR_REQUEST[] = {
+    0, // Help
+    1, // Login
+    0, // Logout
+    0, // Users
+    1, // User
+    2, // Send
+    1, // Messages
+    1, // Subscribe
+    1, // Subscribed
+    1, // Unsubscribe
+    3, // Use
+    2, // Create
+    0, // List
+    0  // Info
+};
+
+enum responses {
+    EV_HELP = 0,
+    LOGGED_IN,
+    LOGGED_OUT,
+    MESSAGE_RECEIVED,
+    G_REPLY_CREATED,
+    U_REPLY_CREATED,
+    G_TEAM_CREATED,
+    U_TEAM_CREATED,
+    G_CHANNEL_CREATED,
+    U_CHANNEL_CREATED,
+    G_THREAD_CREATED,
+    U_THREAD_CREATED,
+    LIST_USERS,
+    LIST_TEAMS,
+    LIST_CHANNELS,
+    LIST_THREADS,
+    LIST_REPLIES,
+    LIST_MESSAGES,
+    UNKNOWN_TEAM,
+    UNKNOWN_CHANNEL,
+    UNKNOWN_THREAD,
+    UNKNOWN_USER,
+    UNAUTHORIZED,
+    UNKNOWN_COMMAND,
+    ALREADY_EXIST,
+    USER_INFO,
+    TEAM_INFO,
+    CHANNEL_INFO,
+    THREAD_INFO,
+    USER_SUBSCRIBED,
+    USER_UNSUBSCRIBED,
+};
+
+static const int NB_ARGS_FOR_RESPONSE[] = {
+    1, // Help
+    2, // Login
+    2, // Logout
+
+    2, // Message received
+
+    4, // Global: thread reply created
+    4, // User: thread reply created
+
+    3, // Global: team created
+    3, // User: team created
+
+    3, // Global: channel created
+    3, // User: channel created
+
+    5, // Global: thread created
+    5, // User: thread created
+
+    -1, // List users
+    -1, // List teams
+    -1, // List channels
+    -1, // List threads
+    -1, // List replies
+    -1, // List messages
+
+    0, // Unknown team
+    0, // Unknown channel
+    0, // Unknown thread
+    0, // Unknown user
+    0, // Unauthorized
+    0, // Unknown command
+    0, // Already exist
+
+    3, // User info
+    3, // Team info
+    3, // Channel info
+    3, // Thread info
+
+    2, // User subscribed
+    2, // User unsubscribed
+};
+
 // Utility
 int int_compare(const void *a, const void *b);
 int bytes_available(int fd);
@@ -116,5 +198,11 @@ void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
 void *memdup(void *src, size_t size);
 void generate_uuid(char *uuid);
+
+// Packet
+bool is_error(enum responses code);
+void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
+void *create_packet(enum responses code, const void **args, int nb_args);
+void send_packet(void *packet, int fd);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

@@ -9,4 +9,8 @@
 
 void help_handler(server_t *server, client_t *user, char **args)
 {
+    void *packet = create_packet(EV_HELP, (const void *[]){"MyTeams project.\n"
+    "Made by the best students of Epitech Lille in 2023.\n"}, 1);
+
+    send_packet(packet, user->fd);
 }
