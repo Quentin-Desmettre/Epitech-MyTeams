@@ -102,6 +102,7 @@ void handle_client_input(server_t *server, int fd);
 void free_client(client_t *client);
 void disconnect_client(server_t *server, int fd);
 void clear_client_buffer(client_t *client);
+char *get_uuid_pair(const char *uuid_1, const char *uuid_2);
 
 // Teams
 void free_team(team_t *team);

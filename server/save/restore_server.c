@@ -96,7 +96,7 @@ void restore_server(server_t *server)
     for (int i = 0; i < nb; i++) {
         user = malloc(sizeof(user_t));
         read(file, user, sizeof(user_t));
-        server_event_user_created(user->uuid, user->name);
+        server_event_user_loaded(user->uuid, user->name);
         map_add(server->users_by_uuid, user->uuid, user);
         map_add(server->users_by_name, user->name, user);
     }

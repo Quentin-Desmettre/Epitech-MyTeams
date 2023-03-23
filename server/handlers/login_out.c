@@ -15,6 +15,7 @@ void login_handler(server_t *server, client_t *client, char **args)
         user = malloc(sizeof(user_t));
         uuid_generate((unsigned char *)user->uuid);
         strcpy(user->name, args[0]);
+        server_event_user_created(user->uuid, user->name);
     }
     server_event_user_logged_in(user->uuid);
     client->logged_in = true;
