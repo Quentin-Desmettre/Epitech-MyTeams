@@ -53,23 +53,23 @@ typedef struct server {
 typedef struct {
     bool requires_login;
     int nb_args;
-    void (*handler)(server_t *server, client_t *user, char **args);
+    void (*handler)(server_t *server, client_t *client, char **args);
 } command_handler_t;
 
-void help_handler(server_t *server, client_t *user, char **args);
-void login_handler(server_t *server, client_t *user, char **args);
-void logout_handler(server_t *server, client_t *user, char **args);
-void users_handler(server_t *server, client_t *user, char **args);
-void user_handler(server_t *server, client_t *user, char **args);
-void send_handler(server_t *server, client_t *user, char **args);
-void messages_handler(server_t *server, client_t *user, char **args);
-void subscribe_handler(server_t *server, client_t *user, char **args);
-void subscribed_handler(server_t *server, client_t *user, char **args);
-void unsubscribe_handler(server_t *server, client_t *user, char **args);
-void use_handler(server_t *server, client_t *user, char **args);
-void create_handler(server_t *server, client_t *user, char **args);
-void list_handler(server_t *server, client_t *user, char **args);
-void info_handler(server_t *server, client_t *user, char **args);
+void help_handler(server_t *server, client_t *client, char **args);
+void login_handler(server_t *server, client_t *client, char **args);
+void logout_handler(server_t *server, client_t *client, char **args);
+void users_handler(server_t *server, client_t *client, char **args);
+void user_handler(server_t *server, client_t *client, char **args);
+void send_handler(server_t *server, client_t *client, char **args);
+void messages_handler(server_t *server, client_t *client, char **args);
+void subscribe_handler(server_t *server, client_t *client, char **args);
+void subscribed_handler(server_t *server, client_t *client, char **args);
+void unsubscribe_handler(server_t *server, client_t *client, char **args);
+void use_handler(server_t *server, client_t *client, char **args);
+void create_handler(server_t *server, client_t *client, char **args);
+void list_handler(server_t *server, client_t *client, char **args);
+void info_handler(server_t *server, client_t *client, char **args);
 
 UNUSED static const command_handler_t COMMANDS[] = {
         {false, 0, &help_handler}, // HELP

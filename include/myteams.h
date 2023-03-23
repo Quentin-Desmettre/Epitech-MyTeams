@@ -116,8 +116,8 @@ static const int NB_ARGS_FOR_REQUEST[] = {
 
 enum responses {
     EV_HELP = 0,
-    LOGGED_IN,
-    LOGGED_OUT,
+    EV_LOGGED_IN,
+    EV_LOGGED_OUT,
     MESSAGE_RECEIVED,
     G_REPLY_CREATED,
     U_REPLY_CREATED,

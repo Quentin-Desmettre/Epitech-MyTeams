@@ -7,6 +7,6 @@
 
 #include "server.h"
 
-void send_handler(server_t *server, client_t *user, char **args)
+void send_handler(server_t *server, client_t *client, char **args)
 {
 }
