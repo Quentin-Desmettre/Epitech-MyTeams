@@ -36,6 +36,7 @@ server: $(OBJ_SERVER)
 	$(CC) -o $(SERVER_NAME) $(OBJ_SERVER) $(CFLAGS)
 
 tests_run:
+	rm -f ./tests/libmyteams.so && cp ./libs/myteams/libmyteams.so ./tests/
 	cd tests && make && ./tests
 
 clean-client:
