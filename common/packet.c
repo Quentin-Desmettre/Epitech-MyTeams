@@ -10,9 +10,9 @@
 bool is_error(enum responses code)
 {
     return code == UNKNOWN_TEAM || code == UNKNOWN_CHANNEL ||
-           code == UNKNOWN_THREAD || code == UNKNOWN_USER ||
-           code == UNAUTHORIZED || code == UNKNOWN_COMMAND
-           || code == ALREADY_EXIST;
+        code == UNKNOWN_THREAD || code == UNKNOWN_USER ||
+        code == UNAUTHORIZED || code == UNKNOWN_COMMAND
+        || code == ALREADY_EXIST;
 }
 
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
@@ -38,8 +38,9 @@ void *create_packet(enum responses code, const void **args,
     return packet;
 }
 
-void send_packet(void *packet, int fd)
+void send_packet(void *packet, int fd, bool to_free)
 {
     write(fd, packet, ((uint64_t *)packet)[0]);
-    free(packet);
+    if (to_free)
+        free(packet);
 }

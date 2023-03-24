@@ -132,7 +132,7 @@ enum responses {
     LIST_CHANNELS,
     LIST_THREADS,
     LIST_REPLIES,
-    LIST_MESSAGES,
+    EV_LIST_MESSAGES,
     UNKNOWN_TEAM,
     UNKNOWN_CHANNEL,
     UNKNOWN_THREAD,
@@ -204,6 +204,6 @@ bool is_error(enum responses code);
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
 void *create_packet(enum responses code, const void **args,
         const int args_lens[], int nb_args);
-void send_packet(void *packet, int fd);
+void send_packet(void *packet, int fd, bool to_free);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

@@ -26,6 +26,8 @@ void send_handler(server_t *server, client_t *client, char **args)
 {
     char *uuid_pair;
     client_t *dest_cli;
+    const void *args_ptr[2];
+    int args_len[2];
 
     if (!map_get(server->users_by_uuid, args[0]))
         return send_error(client, UNKNOWN_USER, args[0]);
@@ -35,7 +37,10 @@ void send_handler(server_t *server, client_t *client, char **args)
     dest_cli = map_get(server->clients_by_uuid, args[0]);
     if (!dest_cli)
         return;
+    args_ptr[0] = client->user->uuid;
+    args_len[0] = 17;
+    args_ptr[1] = args[1];
+    args_len[1] = strlen(args[1]) + 1;
     send_packet(create_packet(EV_MESSAGE_RECEIVED,
-        (const void *[]){client->user->uuid, args[1]},
-        (const int []){17, strlen(args[1]) + 1}, 2), dest_cli->fd);
+        args_ptr, args_len, 2), dest_cli->fd, true);
 }

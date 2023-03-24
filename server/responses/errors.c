@@ -10,5 +10,5 @@
 void send_error(client_t *client, uint8_t code, const char *msg)
 {
     send_packet(create_packet(code, (const void *[]){msg},
-            (const int []){strlen(msg) + 1}, 1), client->fd);
+            (const int []){strlen(msg) + 1}, 1), client->fd, true);
 }

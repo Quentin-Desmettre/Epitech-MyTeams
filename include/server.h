@@ -8,7 +8,10 @@
 #ifndef EPITECH_MYTEAMS_SERVER_H
     #define EPITECH_MYTEAMS_SERVER_H
     #include "myteams.h"
-    #include "logging_server.h"
+
+    #ifndef NO_INCLUDE_TEAMS
+        #include "logging_server.h"
+    #endif
 
 // Client
 typedef struct user {
