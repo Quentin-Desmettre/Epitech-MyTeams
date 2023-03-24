@@ -56,6 +56,7 @@ void create_thread(server_t *server, client_t *cli,
     th->timestamp = clock() / CLOCKS_PER_SEC;
     memcpy(th->title, th_name, strlen(th_name) + 1);
     memcpy(th->message, th_desc, strlen(th_desc) + 1);
+    memcpy(th->uuid_creator, cli->user->uuid, 17);
     server_event_thread_created(cli->context.channel->uuid, th->uuid,
     cli->user->uuid, th->title, th->message);
     map_add(cli->context.channel->threads, th->uuid, th);
