@@ -7,19 +7,30 @@ hasError = False
 filesReceived = 0
 TOKENS_TXT = working_dir + "/.github/checker/tokens.txt"
 # Get all files to parse
+
+def isIgnore(filename):
+    """
+    -not -path './bonus/*' -not -path './tests/*' -not -path './libs/myteams/*'
+    """
+    patterns = ["./bonus/", "./tests/", "./libs/"]
+    for pattern in patterns:
+        if filename.startswith(pattern):
+            return True
+    return False
+
+
 def getFiles():
     files = []
+    final_files = []
     # exclude files in bonus and tests folders
-    os.system("find . -name '*.c' -o -name '*.h' -not -path './bonus/*' -not -path './tests/*' -not -path './libs/myteams/*' > files.txt")
+    os.system("find . -name '*.c' -o -name '*.h' > files.txt")
     with open("files.txt", "r") as f:
         files = f.read().split("\n")
         for (i, file) in enumerate(files):
-            if len(file) == 0:
-                del files[i]
-                continue
-            files[i] = working_dir + "/" + file
+            if not (len(file) == 0 or isIgnore(file)):
+                final_files.append(working_dir + "/" + file)
     os.system("rm files.txt")
-    return files
+    return final_files
 files = getFiles()
 
 def on_message(ws: websocket.WebSocketApp, message):

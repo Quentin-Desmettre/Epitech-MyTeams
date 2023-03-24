@@ -14,6 +14,9 @@ CMakeLists.txt
 cmake-build-debug
 err
 out
+coding-style-reports.log
+truc.c
+tests
 
 # Compiled Object files
 *.slo

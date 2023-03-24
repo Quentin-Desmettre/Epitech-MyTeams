@@ -7,11 +7,12 @@
 
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
-SOURCEDIR_SERVER = server
-SOURCEDIR_CLIENT = client
+SRCDIR_SERVER = server
+SRCDIR_CLIENT = client
+SRC_COM = common
 
-SRC_SERVER = $(call rwildc,$(SOURCEDIR_SERVER),*.c)
-SRC_CLIENT = $(call rwildc,$(SOURCEDIR_CLIENT),*.c)
+SRC_SERVER = $(call rwildc,$(SRCDIR_SERVER),*.c) $(call rwildc,$(SRC_COM),*.c)
+SRC_CLIENT = $(call rwildc,$(SRCDIR_CLIENT),*.c) $(call rwildc,$(SRC_COM),*.c)
 
 CLIENT_NAME = myteams_cli
 SERVER_NAME = myteams_server
@@ -21,7 +22,8 @@ CC = gcc
 OBJ_SERVER = $(SRC_SERVER:.c=.o)
 OBJ_CLIENT = $(SRC_CLIENT:.c=.o)
 
-CFLAGS = -Wall -Wextra -I ./include
+CFLAGS = -Wall -Wextra -I ./include -I ./libs/myteams \
+			-L ./libs/myteams -lmyteams -luuid
 
 all:   $(OBJ_SERVER) $(OBJ_CLIENT)
 	$(CC) -o $(CLIENT_NAME) $(OBJ_CLIENT) $(CFLAGS)
@@ -34,6 +36,7 @@ server: $(OBJ_SERVER)
 	$(CC) -o $(SERVER_NAME) $(OBJ_SERVER) $(CFLAGS)
 
 tests_run:
+	rm -f ./tests/libmyteams.so && cp ./libs/myteams/libmyteams.so ./tests/
 	cd tests && make && ./tests
 
 clean-client:
