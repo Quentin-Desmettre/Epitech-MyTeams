@@ -5,38 +5,37 @@
 ## Makefile
 ##
 
-# rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
+rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
-# SOURCEDIR = ./
+SOURCEDIR = ./
+SOURCEDIR_SERVER = ../server
+SOURCEDIR_CLIENT = ../client
 
-# SRC = $(call rwildc,$(SOURCEDIR),*.c)
+SRC_TMP = $(call rwildc,$(SOURCEDIR_SERVER),*.c) $(call rwildc,$(SOURCEDIR_CLIENT),*.c) $(call rwildc,../common/,*.c)
+SRC = $(filter-out $(call rwildc,..,main.c), $(SRC_TMP)) $(call rwildc,$(SOURCEDIR),*.c)
 
-# CC = gcc
+CC = gcc
 
-# OBJ = $(SRC:.c=.o)
+OBJ = $(SRC:.c=.o)
 
-# NAME = myteams
+NAME = tests
 
-# CFLAGS = -Wall -Wextra -I ./include
+CFLAGS = -I ../include -I ../libs/myteams -luuid --coverage -lcriterion
 
-# all: $(NAME)
+all: clean
+	$(CC) -o $(NAME) $(SRC) $(CFLAGS)
 
-# $(NAME):   $(OBJ)
-# 	gcc -o $(NAME) $(OBJ) $(CFLAGS)
+$(NAME):
+	$(CC) -o $(NAME) $(SRC) $(CFLAGS)
 
-# tests_run:
-# 	cd tests && make && ./tests
+clean:
+	rm -f $(OBJ)
+	find . -name "vgcore.*" -delete
+	find . -name "*~" -delete
+	find . -name "\#*" -delete
+	find .. -name "*.gc*" -delete
 
-# clean:
-# 	rm -f $(OBJ)
-# 	find . -name "vgcore.*" -delete
-# 	find . -name "*~" -delete
-# 	find . -name "\#*" -delete
+fclean:    clean
+	rm -f $(NAME)
 
-# fclean:    clean
-# 	rm -f $(NAME)
-
-# re:        fclean all
-
-all:
-	echo "int main() { return 0; }" > main.c && gcc -o tests main.c
+re:        fclean all
