@@ -134,4 +134,5 @@ void notify_channel_creation(channel_t *ch,
 void notify_thread_creation(thread_t *th, server_t *server, client_t *client);
 void notify_thread_message_creation(thread_message_t *m,
     server_t *server, client_t *client);
+
 #endif //EPITECH_MYTEAMS_SERVER_H

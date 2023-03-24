@@ -53,6 +53,7 @@ typedef struct channel {
 
 typedef struct thread {
     char uuid[UUID_LENGTH + 1];
+    char uuid_creator[UUID_LENGTH + 1];
     char title[MAX_NAME_LENGTH + 1];
     char message[MAX_BODY_LENGTH + 1];
     time_t timestamp;
@@ -129,9 +130,9 @@ enum responses {
     U_THREAD_CREATED,
     EV_LIST_USERS,
     EV_LIST_TEAMS,
-    LIST_CHANNELS,
-    LIST_THREADS,
-    LIST_REPLIES,
+    EV_LIST_CHANNELS,
+    EV_LIST_THREADS,
+    EV_LIST_REPLIES,
     EV_LIST_MESSAGES,
     UNKNOWN_TEAM,
     UNKNOWN_CHANNEL,
@@ -141,9 +142,9 @@ enum responses {
     UNKNOWN_COMMAND,
     ALREADY_EXIST,
     EV_USER_INFO,
-    TEAM_INFO,
-    CHANNEL_INFO,
-    THREAD_INFO,
+    EV_TEAM_INFO,
+    EV_CHANNEL_INFO,
+    EV_THREAD_INFO,
     USER_SUBSCRIBED,
     USER_UNSUBSCRIBED,
 };
