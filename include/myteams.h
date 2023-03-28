@@ -198,6 +198,7 @@ void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
 void *memdup(void *src, size_t size);
 void generate_uuid(char *uuid);
+char **strarr(char *str, char *delim);
 
 // Packet
 bool is_error(enum responses code);

@@ -43,3 +43,27 @@ void *memdup(void *src, size_t size)
     memcpy(dst, src, size);
     return (dst);
 }
+
+char **strarr(char *str, char *delim)
+{
+    if (str == NULL || strlen(str) == 0)
+        return NULL;
+    char **arr = malloc(sizeof(char *) * 2);
+    char *token = strtok(str, delim);
+
+    if (!token) {
+        free(arr);
+        return NULL;
+    }
+    memset(arr, 0, sizeof(char *) * 2);
+    arr[0] = strdup(token);
+    for (int i = 1; token != NULL; i++) {
+        token = strtok(NULL, delim);
+        if (token == NULL)
+            break;
+        arr = realloc(arr, sizeof(char *) * (i + 2));
+        arr[i] = strdup(token);
+        arr[i + 1] = NULL;
+    }
+    return arr;
+}
