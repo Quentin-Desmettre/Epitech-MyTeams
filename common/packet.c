@@ -40,7 +40,7 @@ void *create_packet(enum responses code, const void **args,
 
 void send_packet(void *packet, int fd, bool to_free)
 {
-    write(fd, packet, ((uint64_t *)packet)[0]);
+    safe_write(fd, packet, ((uint64_t *)packet)[0]);
     if (to_free)
         free(packet);
 }

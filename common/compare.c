@@ -10,7 +10,7 @@
 
 int int_compare(const void *a, const void *b)
 {
-    return *(int *)a - *(int *)b;
+    return (int)a - (int)b;
 }
 
 void generate_uuid(char uuid[17])
