@@ -9,7 +9,7 @@
 
 void add_message_to_packet(void **packet, user_message_t *msg)
 {
-    append_arg_to_packet(packet, msg->uuid_sender, 17);
+    append_arg_to_packet(packet, msg->uuid_sender, sizeof(msg->uuid_sender));
     append_arg_to_packet(packet, &msg->timestamp, sizeof(time_t));
     append_arg_to_packet(packet, msg->content, strlen(msg->content) + 1);
 }

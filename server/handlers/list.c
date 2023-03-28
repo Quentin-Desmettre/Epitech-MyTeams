@@ -68,8 +68,8 @@ static void list_thread_replies(client_t *client)
         return send_packet(packet, client->fd, true);
     do {
         reply = replies->data;
-        append_arg_to_packet(&packet, thread_uuid, 17);
-        append_arg_to_packet(&packet, reply->uuid_sender, 17);
+        append_arg_to_packet(&packet, thread_uuid, sizeof(thread_uuid));
+        append_arg_to_packet(&packet, reply->uuid_sender, sizeof(reply->uuid_sender));
         append_arg_to_packet(&packet, &reply->timestamp, sizeof(time_t));
         append_arg_to_packet(&packet, reply->content, sizeof(reply->content));
         replies = replies->next;

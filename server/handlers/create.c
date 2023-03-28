@@ -18,7 +18,7 @@ void create_team(server_t *server, client_t *client,
     generate_uuid(t->uuid);
     memcpy(t->name, team_name, strlen(team_name) + 1);
     memcpy(t->description, team_desc, strlen(team_desc) + 1);
-    t->channels = map_create((compare_key_t)uuid_compare, free_channel);
+    t->channels = map_create((compare_key_t)strcmp, free_channel);
     server_event_team_created(t->uuid, t->name, client->user->uuid);
     map_add(server->teams, t->uuid, t);
     notify_team_creation(t, server, client);
@@ -37,7 +37,7 @@ void create_channel(server_t *server, client_t *cli,
     generate_uuid(ch->uuid);
     memcpy(ch->name, ch_name, strlen(ch_name) + 1);
     memcpy(ch->description, ch_desc, strlen(ch_desc) + 1);
-    ch->threads = map_create((compare_key_t)uuid_compare, free_thread);
+    ch->threads = map_create((compare_key_t)strcmp, free_thread);
     server_event_channel_created(cli->context.team->uuid, ch->uuid, ch->name);
     map_add(cli->context.team->channels, ch->uuid, ch);
     notify_channel_creation(ch, server, cli);
@@ -56,7 +56,7 @@ void create_thread(server_t *server, client_t *cli,
     th->timestamp = clock() / CLOCKS_PER_SEC;
     memcpy(th->title, th_name, strlen(th_name) + 1);
     memcpy(th->message, th_desc, strlen(th_desc) + 1);
-    memcpy(th->uuid_creator, cli->user->uuid, 17);
+    memcpy(th->uuid_creator, cli->user->uuid, sizeof(cli->user->uuid));
     server_event_thread_created(cli->context.channel->uuid, th->uuid,
     cli->user->uuid, th->title, th->message);
     map_add(cli->context.channel->threads, th->uuid, th);
@@ -70,7 +70,7 @@ void create_reply(server_t *server, client_t *cli, const char *re_msg)
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     re = calloc(sizeof(thread_message_t), 1);
-    memcpy(re->uuid_sender, cli->user->uuid, 17);
+    memcpy(re->uuid_sender, cli->user->uuid, sizeof(cli->user->uuid));
     memcpy(re->content, re_msg, strlen(re_msg) + 1);
     re->timestamp = clock() / CLOCKS_PER_SEC;
     server_event_reply_created(cli->context.thread->uuid, re->uuid_sender,

@@ -5,20 +5,18 @@
 ** compare
 */
 
-#include <string.h>
 #include <uuid/uuid.h>
+#include "myteams.h"
 
 int int_compare(const void *a, const void *b)
 {
-    return *(int *)a - *(int *)b;
+    return (int)(long long)a - (int)(long long)b;
 }
 
-void generate_uuid(char uuid[17])
+void generate_uuid(char uuid[R_UUID_LENGTH])
 {
-    while (1) {
-        uuid_generate((unsigned char*)uuid);
-        if (memchr(uuid, 0, 16) == NULL)
-            break;
-    }
-    uuid[16] = 0;
+    uuid_t uuid_bin;
+
+    uuid_generate(uuid_bin);
+    uuid_unparse(uuid_bin, uuid);
 }

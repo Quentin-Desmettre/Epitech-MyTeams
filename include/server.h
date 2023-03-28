@@ -15,7 +15,7 @@
 
 // Client
 typedef struct user {
-    char uuid[UUID_LENGTH];
+    char uuid[R_UUID_LENGTH];
     char name[MAX_NAME_LENGTH + 1];
 } user_t;
 

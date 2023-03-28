@@ -66,8 +66,8 @@ server_t *init_server(int port)
         return (NULL);
     }
     serv->clients_by_fd = map_create(int_compare, (free_value_t)free_client);
-    serv->clients_by_uuid = map_create((compare_key_t)uuid_compare, NULL);
-    serv->users_by_uuid = map_create((compare_key_t)uuid_compare, free);
+    serv->clients_by_uuid = map_create((compare_key_t)strcmp, NULL);
+    serv->users_by_uuid = map_create((compare_key_t)strcmp, free);
     serv->users_by_name = map_create((compare_key_t)strcmp, NULL);
     serv->teams = map_create((compare_key_t)strcmp, (free_value_t)free_team);
     serv->messages = map_create((compare_key_t)strcmp,

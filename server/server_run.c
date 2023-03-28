@@ -31,13 +31,13 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
     uint16_t arg_len;
 
     for (int i = 0; i < nb_args; i++) {
-        arg_len = *(uint16_t *)(request + 9 + offset);
-        if (arg_len > buf_size - 11 - offset) {
+        arg_len = *(uint16_t *)(request + 11 + offset);
+        if (arg_len > buf_size - 13 - offset) {
             free(args);
             return NULL;
         }
         arg = malloc(arg_len + 1);
-        memcpy(arg, request + 11 + offset, arg_len);
+        memcpy(arg, request + 13 + offset, arg_len);
         arg[arg_len] = 0;
         append_str_array(&args, arg);
         offset += arg_len;
