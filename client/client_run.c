@@ -38,4 +38,3 @@ void client_run(client_t *client)
     }
     free(input);
 }
-

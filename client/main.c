@@ -7,7 +7,7 @@
 
 #include "client.h"
 
-int help()
+int help(void)
 {
     printf("USAGE: ./myteams_server port\n\n");
     printf("\tip\tis the server ip address on which the server socket"
