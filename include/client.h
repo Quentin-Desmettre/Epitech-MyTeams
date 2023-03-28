@@ -25,6 +25,7 @@ typedef struct client {
     client_context_t context;
 
     char *input_buffer;
+    char **input_args;
     size_t input_buffer_size;
 
 } client_t;
