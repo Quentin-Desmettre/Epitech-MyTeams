@@ -38,7 +38,7 @@ static void restore_channel(team_t *team, int file)
     read(file, channel->name, sizeof(channel->name));
     read(file, &channel->description, sizeof(channel->description));
     read(file, &nb_threads, sizeof(int));
-    channel->threads = map_create((compare_key_t)uuid_compare, free_thread);
+    channel->threads = map_create((compare_key_t)strcmp, free_thread);
     for (int i = 0; i < nb_threads; i++)
         restore_thread(channel, file);
     map_add(team->channels, channel->uuid, channel);
@@ -55,7 +55,7 @@ static void restore_team(server_t *server, int file)
     read(file, team->name, sizeof(team->name));
     read(file, team->description, sizeof(team->description));
     read(file, &nb_channels, sizeof(int));
-    team->channels = map_create((compare_key_t)uuid_compare,
+    team->channels = map_create((compare_key_t)strcmp,
                                 (free_value_t)free_channel);
     for (int i = 0; i < nb_channels; i++)
         restore_channel(team, file);

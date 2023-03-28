@@ -15,7 +15,7 @@
 
 // Client
 typedef struct user {
-    char uuid[UUID_LENGTH];
+    char uuid[R_UUID_LENGTH];
     char name[MAX_NAME_LENGTH + 1];
 } user_t;
 
@@ -120,5 +120,19 @@ void send_error(client_t *client, uint8_t code, const char *message);
 void fd_data_init(server_t *server);
 int get_first_input_available(fd_data_t *data, server_t *server);
 void remove_fd_from_array(int **array, int *len, int fd);
+
+// Utility
+bool thread_exists(const char *name, channel_t *channel);
+bool channel_exists(const char *name, team_t *team);
+bool team_exists(const char *name, server_t *server);
+bool is_user_subscribed(client_t *client, team_t *team);
+
+// Create notifications
+void notify_team_creation(team_t *t, server_t *server, client_t *client);
+void notify_channel_creation(channel_t *ch,
+    server_t *server, client_t *client);
+void notify_thread_creation(thread_t *th, server_t *server, client_t *client);
+void notify_thread_message_creation(thread_message_t *m,
+    server_t *server, client_t *client);
 
 #endif //EPITECH_MYTEAMS_SERVER_H

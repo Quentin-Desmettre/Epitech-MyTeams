@@ -18,7 +18,7 @@ static void list_subscribed_teams(server_t *server, client_t *client)
             continue;
         do {
             if (strcmp(users->data, client->user->uuid) == 0) {
-                append_arg_to_packet(&packet, t->uuid, 17);
+                append_arg_to_packet(&packet, t->uuid, sizeof(t->uuid));
                 append_arg_to_packet(&packet, t->name, strlen(t->name) + 1);
                 append_arg_to_packet(&packet,
                                 t->description, strlen(t->description) + 1);
@@ -38,7 +38,7 @@ void add_user_info(void **packet, char *uuid, server_t *server)
     if (!user)
         return;
     status = map_get(server->clients_by_uuid, uuid) ? 1 : 0;
-    append_arg_to_packet(packet, uuid, 17);
+    append_arg_to_packet(packet, uuid, R_UUID_LENGTH);
     append_arg_to_packet(packet, user->name, strlen(user->name) + 1);
     append_arg_to_packet(packet, &status, sizeof(int));
 }
