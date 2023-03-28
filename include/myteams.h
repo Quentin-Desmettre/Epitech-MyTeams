@@ -33,11 +33,12 @@
     #define MAX_NAME_LENGTH 32
     #define MAX_DESCRIPTION_LENGTH 255
     #define MAX_BODY_LENGTH 512
-    #define UUID_LENGTH 16
+    #define UUID_LENGTH 36
+    #define R_UUID_LENGTH 37
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct team {
-    char uuid[UUID_LENGTH + 1];
+    char uuid[R_UUID_LENGTH];
     char name[MAX_NAME_LENGTH + 1];
     char description[MAX_DESCRIPTION_LENGTH + 1];
     map_t *channels; // <== Maps uuid_channel -> channel_t
@@ -45,15 +46,15 @@ typedef struct team {
 } team_t;
 
 typedef struct channel {
-    char uuid[UUID_LENGTH + 1];
+    char uuid[R_UUID_LENGTH];
     char name[MAX_NAME_LENGTH + 1];
     char description[MAX_DESCRIPTION_LENGTH + 1];
     map_t *threads; // <== Maps uuid_thread -> thread_t
 } channel_t;
 
 typedef struct thread {
-    char uuid[UUID_LENGTH + 1];
-    char uuid_creator[UUID_LENGTH + 1];
+    char uuid[R_UUID_LENGTH];
+    char uuid_creator[R_UUID_LENGTH];
     char title[MAX_NAME_LENGTH + 1];
     char message[MAX_BODY_LENGTH + 1];
     time_t timestamp;
@@ -61,7 +62,7 @@ typedef struct thread {
 } thread_t;
 
 typedef struct thread_message {
-    char uuid_sender[UUID_LENGTH + 1];
+    char uuid_sender[R_UUID_LENGTH];
     char content[MAX_BODY_LENGTH + 1];
     time_t timestamp;
 } thread_message_t;
@@ -73,8 +74,8 @@ typedef struct user_context {
 } user_context_t;
 
 typedef struct message {
-    char uuid_sender[UUID_LENGTH + 1];
-    char uuid_receiver[UUID_LENGTH + 1];
+    char uuid_sender[R_UUID_LENGTH];
+    char uuid_receiver[R_UUID_LENGTH];
     time_t timestamp;
     char content[MAX_BODY_LENGTH + 1];
 } user_message_t;
@@ -198,7 +199,7 @@ int bytes_available(int fd);
 void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
 void *memdup(void *src, size_t size);
-void generate_uuid(char *uuid);
+void generate_uuid(char uuid[R_UUID_LENGTH]);
 char **strarr(char *str, char *delim);
 
 // Packet

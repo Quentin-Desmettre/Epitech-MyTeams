@@ -12,8 +12,8 @@ static void send_subscribe_data(const char *user_uuid, const char *team_uuid,
 {
     void *packet = create_packet(code, NULL, NULL, 0);
 
-    append_arg_to_packet(&packet, user_uuid, 17);
-    append_arg_to_packet(&packet, team_uuid, 17);
+    append_arg_to_packet(&packet, user_uuid, R_UUID_LENGTH);
+    append_arg_to_packet(&packet, team_uuid, R_UUID_LENGTH);
     send_packet(packet, fd, true);
 }
 
