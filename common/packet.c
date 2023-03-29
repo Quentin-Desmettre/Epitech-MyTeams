@@ -8,14 +8,6 @@
 #include "myteams.h"
 #include <stdarg.h>
 
-bool is_error(enum responses code)
-{
-    return code == UNKNOWN_TEAM || code == UNKNOWN_CHANNEL ||
-        code == UNKNOWN_THREAD || code == UNKNOWN_USER ||
-        code == UNAUTHORIZED || code == UNKNOWN_COMMAND
-        || code == ALREADY_EXIST;
-}
-
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
 {
     uint64_t packet_size = ((uint64_t *)(*packet))[0];
@@ -46,34 +38,41 @@ void send_packet(void *packet, int fd, bool to_free)
         free(packet);
 }
 
-/**
- * @brief Read a packet and fill the given arguments
- * @param packet The packet
- * @param params The parameters to read, 's' for string and 't' for time_t.
- * Example: "sst" for 2 strings and 1 time_t, in this order.
- * @param ... The arguments to fill, should be pointers to string (char **) and
- * pointer to time_t (time_t *).
- */
-void read_packet(void *packet, const char *params, ...)
+static bool fetch_arg_len(void *packet,
+                          uint16_t *arg_len, int offset, char param)
+{
+    const uint64_t packet_size = ((uint64_t *)packet)[0];
+
+    if (11 + offset + 2 > packet_size)
+        return false;
+    *arg_len = *(uint16_t *)(packet + 11 + offset);
+    if (11 + offset + 2 + *arg_len > packet_size)
+        return false;
+    if (param == 't' && *arg_len != sizeof(time_t))
+        return false;
+    return true;
+}
+
+bool read_packet(void *packet, const char *params, ...)
 {
     va_list ap;
     uint16_t arg_len;
     char **arg_str;
     int offset = 0;
-
+    if (((uint64_t *)packet)[0] < 13)
+        return false;
     va_start(ap, params);
     for (int i = 0; params[i]; i++) {
+        if (!fetch_arg_len(packet, &arg_len, offset, params[i]))
+            return false;
         if (params[i] == 's') {
-            arg_len = *(uint16_t *)(packet + 11 + offset);
             arg_str = va_arg(ap, char **);
             *arg_str = malloc(arg_len);
             memcpy(*arg_str, packet + 13 + offset, arg_len);
-            offset += 2 + arg_len;
-        }
-        if (params[i] == 't') {
-            *va_arg(ap, time_t *) = *(time_t *)(packet + 13 + offset);
-            offset += 2 + sizeof(time_t);
-        }
+        } if (params[i] == 't')
+            memcpy(va_arg(ap, time_t *), packet + 13 + offset, arg_len);
+        offset += 2 + arg_len;
     }
     va_end(ap);
+    return true;
 }

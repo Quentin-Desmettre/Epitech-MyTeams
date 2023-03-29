@@ -27,6 +27,7 @@
     #include <fcntl.h>
     #include "linked_list.h"
     #include "map.h"
+    #include <stdio.h>
     #include <uuid/uuid.h>
     #define UNUSED __attribute__((unused))
     #define MAX_CLIENTS 100
@@ -203,12 +204,21 @@ void generate_uuid(char uuid[R_UUID_LENGTH]);
 char **strarr(char *str, char *delim);
 
 // Packet
-bool is_error(enum responses code);
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
 void *create_packet(enum responses code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);
-void read_packet(void *packet, const char *params, ...);
+
+/**
+ * @brief Read a packet and fill the given arguments
+ * @param packet The packet
+ * @param params The parameters to read, 's' for string and 't' for time_t.
+ * Example: "sst" for 2 strings and 1 time_t, in this order.
+ * @param ... The arguments to fill, should be pointers to string (char **) and
+ * pointer to time_t (time_t *).
+ * @return true if the packet was read successfully, false otherwise.
+ */
+bool read_packet(void *packet, const char *params, ...);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

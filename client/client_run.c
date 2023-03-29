@@ -60,46 +60,20 @@ int client_input_handling(char **input, client_t *client)
     return EXIT_SUCCESS;
 }
 
-void client_login_received(void *buffer)
-{
-    char *uuid = NULL;
-    char *username = NULL;
-
-    read_packet(buffer, "ss", &uuid, &username);
-    client_event_logged_in(uuid, username);
-}
-
-void client_logout_received(void *buffer)
-{
-    char *uuid = NULL;
-
-    read_packet(buffer, "s", &uuid);
-    client_event_logged_out(uuid);
-}
-
 void handle_action(client_t *client)
 {
     uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
     char **args = NULL;
+    const command_receiver_t *handler = NULL;
 
     if (cmd_id >= NB_COMMANDS)
         return;
 
-    //handler = &COMMANDS[cmd_id];
-    //args = get_request_arguments(client->buffer, client->buf_size, handler->nb_args);
-    //clear_client_buffer(client);
-    if (cmd_id == 1)
-        client_login_received(client->buffer);
-    if (cmd_id == 2)
-        client_logout_received(client->buffer);
+    handler = &RESPONSES[cmd_id];
+    handler->func(client);
     free(client->buffer);
     client->buffer = NULL;
     client->buf_size = 0;
-    //if (!args && handler->nb_args != 0)
-    //    return send_error(client, UNKNOWN_COMMAND, "");
-    //if (handler->requires_login && !client->logged_in)
-    //    return send_error(client, UNAUTHORIZED, "");
-    //handler->handler(server, client, args);
     if (args)
         free_str_array(args);
 }
