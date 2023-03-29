@@ -58,7 +58,7 @@ void handle_request(server_t *server, client_t *client)
     args = get_request_arguments(client->buffer,
                                 client->buf_size, handler->nb_args);
     clear_client_buffer(client);
-    if (!args)
+    if (!args && handler->nb_args > 0)
         return send_error(client, UNKNOWN_COMMAND, "");
     if (handler->requires_login && !client->logged_in)
         return send_error(client, UNAUTHORIZED, "");

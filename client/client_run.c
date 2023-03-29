@@ -60,13 +60,42 @@ int client_input_handling(char **input, client_t *client)
     return EXIT_SUCCESS;
 }
 
-void client_read(client_t *client)
+void client_login_received(void *buffer)
 {
-    printf("Reading...\n");
-    int number_of_bytes = 0;
+    char *uuid = NULL;
+    char *username = NULL;
 
-    read(client->socketFd, &number_of_bytes, 8);
-    printf("Number of bytes: %d\n", number_of_bytes);
+    read_packet(buffer, "ss", &uuid, &username);
+    client_event_logged_in(uuid, username);
+}
+
+void client_logout_received(void *buffer)
+{
+    char *uuid = NULL;
+
+    read_packet(buffer, "s", &uuid);
+    client_event_logged_out(uuid);
+}
+
+int client_read(client_t *client)
+{
+    int bytes = bytes_available(client->socketFd);
+    void *buffer = NULL;
+
+    if (bytes < 0)
+        return -1;
+    if (bytes == 0)
+        return 0;
+    buffer = malloc(bytes);
+    if (read(client->socketFd, buffer, bytes) != bytes)
+        return free(buffer), 0;
+    uint8_t cmd_id = ((uint8_t *)buffer)[8];
+    if (cmd_id == 1)
+        client_login_received(buffer);
+    if (cmd_id == 2)
+        client_logout_received(buffer);
+    free(buffer);
+    return 0;
 }
 
 void client_run(client_t *client)
@@ -81,7 +110,8 @@ void client_run(client_t *client)
         if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
         if (FD_ISSET(client->socketFd, &readfds))
-            client_read(client);
+            if (client_read(client))
+                break;
         if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
             break;
     }
