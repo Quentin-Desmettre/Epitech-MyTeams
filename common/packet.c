@@ -50,6 +50,8 @@ static bool fetch_arg_len(void *packet,
         return false;
     if (param == 't' && *arg_len != sizeof(time_t))
         return false;
+	if (param == 'i' && *arg_len != sizeof(int))
+		return false;
     return true;
 }
 
@@ -71,8 +73,37 @@ bool read_packet(void *packet, const char *params, ...)
             memcpy(*arg_str, packet + 13 + offset, arg_len);
         } if (params[i] == 't')
             memcpy(va_arg(ap, time_t *), packet + 13 + offset, arg_len);
+		if (params[i] == 'i') {
+			memcpy(va_arg(ap, int *), packet + 13 + offset, 4);
+		}
         offset += 2 + arg_len;
     }
     va_end(ap);
     return true;
+}
+
+list_t *read_packet_list(void *packet, char const *packet_content)
+{
+	list_t *packets = NULL;
+	void *tmp_packet;
+	uint16_t nb_args = ((uint16_t *)(packet + 9))[0];
+	uint16_t nb_packets;
+	uint16_t arg_len;
+	int offset = 0;
+
+	if (nb_args % strlen(packet_content) != 0)
+		return NULL;
+	nb_packets = nb_args / strlen(packet_content);
+	for (int i = 0; i < nb_packets; i++) {
+		tmp_packet = create_packet(0, NULL, NULL, 0);
+		for (int j = 0; j < strlen(packet_content); j++) {
+			if (!fetch_arg_len(packet, &arg_len, offset, packet_content[j])) {
+				return NULL;
+			}
+			append_arg_to_packet(&tmp_packet, packet + 13 + offset, arg_len);
+			offset += 2 + arg_len;
+		}
+		append_node(&packets, tmp_packet);
+	}
+	return packets;
 }
