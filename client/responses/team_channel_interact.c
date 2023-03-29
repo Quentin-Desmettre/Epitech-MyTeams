@@ -13,6 +13,9 @@ void client_receiver_team_created_g(client_t *client)
     char *team_name = NULL;
     char *team_description = NULL;
 
+    printf("team created_g\n");
+
+
     if (read_packet(client->buffer, "sss", &team_uuid, &team_name,
                 &team_description))
         return;
@@ -24,6 +27,8 @@ void client_receiver_team_created_u(client_t *client)
     char *team_uuid = NULL;
     char *team_name = NULL;
     char *team_description = NULL;
+
+    printf("team created\n");
 
     if (read_packet(client->buffer, "sss", &team_uuid, &team_name,
         &team_description))

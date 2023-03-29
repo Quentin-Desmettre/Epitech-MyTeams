@@ -66,8 +66,10 @@ void handle_action(client_t *client)
     char **args = NULL;
     const command_receiver_t *handler = NULL;
 
-    if (cmd_id >= NB_COMMANDS)
+    if (cmd_id >= NB_RESPONSES) {
+        printf("Invalid command id: %d\n", cmd_id);
         return;
+    }
 
     handler = &RESPONSES[cmd_id];
     handler->func(client);

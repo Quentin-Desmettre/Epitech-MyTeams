@@ -149,6 +149,7 @@ enum responses {
     EV_THREAD_INFO,
     USER_SUBSCRIBED,
     USER_UNSUBSCRIBED,
+    NB_RESPONSES
 };
 
 static const int NB_ARGS_FOR_RESPONSE[] = {

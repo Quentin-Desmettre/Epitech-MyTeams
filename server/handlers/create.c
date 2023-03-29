@@ -12,6 +12,7 @@ void create_team(server_t *server, client_t *client,
 {
     team_t *t;
 
+    printf("here3\n");
     if (team_exists(team_name, server))
         return send_error(client, ALREADY_EXIST, "");
     t = calloc(sizeof(team_t), 1);
@@ -29,6 +30,7 @@ void create_channel(server_t *server, client_t *cli,
 {
     channel_t *ch;
 
+    printf("here2\n");
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     if (channel_exists(ch_name, cli->context.team))
@@ -67,6 +69,7 @@ void create_reply(server_t *server, client_t *cli, const char *re_msg)
 {
     thread_message_t *re;
 
+    printf("here1\n");
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     re = calloc(sizeof(thread_message_t), 1);
@@ -81,6 +84,7 @@ void create_reply(server_t *server, client_t *cli, const char *re_msg)
 
 void create_handler(server_t *server, client_t *client, char **args)
 {
+    printf("here\n");
     if (client->context.team == NULL)
         return create_team(server, client, args[0], args[1]);
     if (client->context.channel == NULL)

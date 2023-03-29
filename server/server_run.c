@@ -62,6 +62,7 @@ void handle_request(server_t *server, client_t *client)
         return send_error(client, UNKNOWN_COMMAND, "");
     if (handler->requires_login && !client->logged_in)
         return send_error(client, UNAUTHORIZED, "");
+    printf("%lu\n", cmd_id);
     handler->handler(server, client, args);
     if (args)
         free_str_array(args);
