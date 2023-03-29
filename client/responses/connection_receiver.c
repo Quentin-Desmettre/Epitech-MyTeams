@@ -20,8 +20,9 @@ void client_receiver_logged_in(client_t *client)
 void client_receiver_logged_out(client_t *client)
 {
     char *uuid = NULL;
+    char *username = NULL;
 
-    if (!read_packet(client->buffer, "s", &uuid))
+    if (!read_packet(client->buffer, "ss", &uuid, &username))
         return;
-    client_event_logged_out(uuid);
+    client_event_logged_out(uuid, username);
 }

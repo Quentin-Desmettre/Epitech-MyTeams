@@ -102,6 +102,22 @@ void client_receiver_thread_created_u(client_t *client);
 void client_receiver_list_users(client_t *client);
 void client_receiver_list_teams(client_t *client);
 void client_receiver_list_channels(client_t *client);
+void client_receiver_list_threads(client_t *client);
+void client_receiver_list_replies(client_t *client);
+void client_receiver_list_messages(client_t *client);
+void client_receiver_unknown_team(client_t *client);
+void client_receiver_unknown_channel(client_t *client);
+void client_receiver_unknown_thread(client_t *client);
+void client_receiver_unknown_user(client_t *client);
+void client_receiver_unauthorized(client_t *client);
+void client_receiver_unknown_command(client_t *client);
+void client_receiver_already_exist(client_t *client);
+void client_receiver_user_info(client_t *client);
+void client_receiver_team_info(client_t *client);
+void client_receiver_channel_info(client_t *client);
+void client_receiver_thread_info(client_t *client);
+void client_receiver_user_subscribed(client_t *client);
+void client_receiver_user_unsubscribed(client_t *client);
 
 static const command_receiver_t RESPONSES[] = {
         {0, &client_receiver_help},
@@ -123,17 +139,17 @@ static const command_receiver_t RESPONSES[] = {
         {15, &client_receiver_list_threads},
         {16, &client_receiver_list_replies},
         {17, &client_receiver_list_messages},
-        {18, &client_receiver_unknown_team}, // OK
-        {19, &client_receiver_unknown_channel}, // OK
-        {20, &client_receiver_unknown_thread}, // OK
-        {21, &client_receiver_unknown_user}, // OK
-        {22, &client_receiver_unauthorized}, // OK
-        {23, &client_receiver_unknown_command}, // OK
-        {24, &client_receiver_already_exist}, // OK
-        {25, &client_receiver_user_info}, // OK ?
-        {26, &client_receiver_team_info}, // OK
-        {27, &client_receiver_channel_info}, // OK
-        {28, &client_receiver_thread_info}, // OK
+        {18, &client_receiver_unknown_team},
+        {19, &client_receiver_unknown_channel},
+        {20, &client_receiver_unknown_thread},
+        {21, &client_receiver_unknown_user},
+        {22, &client_receiver_unauthorized},
+        {23, &client_receiver_unknown_command},
+        {24, &client_receiver_already_exist},
+        {25, &client_receiver_user_info},
+        {26, &client_receiver_team_info},
+        {27, &client_receiver_channel_info},
+        {28, &client_receiver_thread_info},
         {29, &client_receiver_user_subscribed},
         {30, &client_receiver_user_unsubscribed},
         {31, NULL, 0, 0, NULL}
