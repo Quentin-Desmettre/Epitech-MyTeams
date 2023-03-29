@@ -9,6 +9,7 @@
     #define EPITECH_MYTEAMS_CLIENT_H
 
     #include "myteams.h"
+	#include "logging_client.h"
 
 typedef struct client_context {
     char team_uuid[UUID_LENGTH + 1];
@@ -103,20 +104,21 @@ static const command_receiver_t COMMANDS[] = {
         {12, &client_receiver_list_users},
         {13, &client_receiver_list_teams},
         {14, &client_receiver_list_channels},
+
         {15, &client_receiver_list_threads},
         {16, &client_receiver_list_replies},
         {17, &client_receiver_list_messages},
-        {18, &client_receiver_unknown_team},
-        {19, &client_receiver_unknown_channel},
-        {20, &client_receiver_unknown_thread},
-        {21, &client_receiver_unknown_user},
-        {22, &client_receiver_unauthorized},
-        {23, &client_receiver_unknown_command},
-        {24, &client_receiver_already_exist},
-        {25, &client_receiver_user_info},
-        {26, &client_receiver_team_info},
-        {27, &client_receiver_channel_info},
-        {28, &client_receiver_thread_info},
+        {18, &client_receiver_unknown_team}, // OK
+        {19, &client_receiver_unknown_channel}, // OK
+        {20, &client_receiver_unknown_thread}, // OK
+        {21, &client_receiver_unknown_user}, // OK
+        {22, &client_receiver_unauthorized}, // OK
+        {23, &client_receiver_unknown_command}, // OK
+        {24, &client_receiver_already_exist}, // OK
+        {25, &client_receiver_user_info}, // OK ?
+        {26, &client_receiver_team_info}, // OK
+        {27, &client_receiver_channel_info}, // OK
+        {28, &client_receiver_thread_info}, // OK
         {29, &client_receiver_user_subscribed},
         {30, &client_receiver_user_unsubscribed},
         {31, NULL, 0, 0, NULL}
