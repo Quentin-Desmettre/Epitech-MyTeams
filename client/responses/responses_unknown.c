@@ -44,5 +44,5 @@ void client_receiver_unknown_command(client_t *client)
 	char *command;
 
 	read_packet(client->buffer, "s", &command);
-	printf("%s\n", command);
+	printf("Unknown command %s\n", command);
 }

@@ -37,18 +37,3 @@ void client_receiver_thread_created_u(client_t *client)
         thread_title, thread_body);
 
 }
-
-void client_receiver_list_users(UNUSED client_t *client)
-{
-
-}
-
-void client_receiver_list_teams(UNUSED client_t *client)
-{
-
-}
-
-void client_receiver_list_channels(UNUSED client_t *client)
-{
-
-}

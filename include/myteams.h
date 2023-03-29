@@ -222,4 +222,14 @@ void safe_write(int fd, void *data, size_t len);
  */
 bool read_packet(void *packet, const char *params, ...);
 
+/**
+ * @brief Split a packet into a list of packet, containing the arguments.
+ * @param packet The orginal packet
+ * @param packet_content The content of each sub-packet packet, as a string.
+ * If a sub packet contains two strings and a time_t, the string should be
+ * "sst".
+ * @return list_t* if it worked, else NULL in case of error
+ */
+list_t *read_packet_list(void *packet, char const *packet_content);
+
 #endif //EPITECH_MYTEAMS_MYTEAMS_H
