@@ -17,6 +17,7 @@ out
 coding-style-reports.log
 truc.c
 tests
+server.db
 
 # Compiled Object files
 *.slo

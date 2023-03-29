@@ -73,18 +73,17 @@ void client_run(client_t *client)
 {
     char *input = NULL;
     fd_set readfds;
+
+    while (1) {
     FD_ZERO(&readfds);
     FD_SET(client->socketFd, &readfds);
     FD_SET(0, &readfds);
-
-    while (1) {
         if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
         if (FD_ISSET(client->socketFd, &readfds))
             client_read(client);
-        if (FD_ISSET(0, &readfds))
-            if (client_input_handling(&input, client))
-                break;
+        if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
+            break;
     }
     free(input);
 }
