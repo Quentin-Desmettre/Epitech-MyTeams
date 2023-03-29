@@ -56,7 +56,6 @@ void client_login(client_t *client, char **args);
 void client_logout(client_t *client, char **args);
 
 typedef struct command {
-    int id;
     char *name;
     int min_args;
     int max_args;
@@ -64,22 +63,22 @@ typedef struct command {
 } command_t;
 
 static const command_t COMMANDS[] = {
-        {0, "/login", 2, 2, &client_login},
-        {1, "/logout", 1, 1, &client_logout},
-        {2, "/users", 1, 1, &client_users},
-        {3, "/user", 2, 2, &client_user},
-        {4, "/send", 3, 3, &client_send},
-        {5, "/messages", 2, 2, &client_messages},
-        {6, "/subscribe", 2, 2, &client_subscribe},
-        {7, "/subscribed", 1, 1, &client_subscribed},
-        {8, "/unsubscribe", 2, 2, &client_unsubscribe},
-        {9, "/use", 2, 2, &client_use},
-        {10, "/create", 3, 3, &client_create},
-        {11, "/list", 1, 1, &client_list},
-        {12, "/info", 2, 2, &client_info},
-        {13, "/help", 1, 1, &client_help},
-        {14, "/exit", 1, 1, &client_exit},
-        {15, NULL, 0, 0, NULL}
+        {"/login", 2, 2, &client_login},
+        {"/logout", 1, 1, &client_logout},
+        {"/users", 1, 1, &client_users},
+        {"/user", 2, 2, &client_user},
+        {"/send", 3, 3, &client_send},
+        {"/messages", 2, 2, &client_messages},
+        {"/subscribe", 2, 2, &client_subscribe},
+        {"/subscribed", 1, 1, &client_subscribed},
+        {"/unsubscribe", 2, 2, &client_unsubscribe},
+        {"/use", 2, 2, &client_use},
+        {"/create", 3, 3, &client_create},
+        {"/list", 1, 1, &client_list},
+        {"/info", 2, 2, &client_info},
+        {"/help", 1, 1, &client_help},
+        {"/exit", 1, 1, &client_exit},
+        {NULL, 0, 0, NULL}
 };
 
 typedef struct command_receiver {
@@ -87,7 +86,23 @@ typedef struct command_receiver {
     void (*func)(client_t *);
 } command_receiver_t;
 
-static const command_receiver_t COMMANDS[] = {
+void client_receiver_logged_in(client_t *client);
+void client_receiver_logged_out(client_t *client);
+void client_receiver_help(client_t *client);
+void client_receiver_message_received(client_t *client);
+void client_receiver_reply_created_g(UNUSED client_t *client);
+void client_receiver_reply_created_u(UNUSED client_t *client);
+void client_receiver_team_created_g(client_t *client);
+void client_receiver_team_created_u(client_t *client);
+void client_receiver_channel_created_g(client_t *client);
+void client_receiver_channel_created_u(client_t *client);
+void client_receiver_thread_created_g(client_t *client);
+void client_receiver_thread_created_u(client_t *client);
+void client_receiver_list_users(client_t *client);
+void client_receiver_list_teams(client_t *client);
+void client_receiver_list_channels(client_t *client);
+
+static const command_receiver_t RESPONSES[] = {
         {0, &client_receiver_help},
         {1, &client_receiver_logged_in},
         {2, &client_receiver_logged_out},
@@ -103,6 +118,7 @@ static const command_receiver_t COMMANDS[] = {
         {12, &client_receiver_list_users},
         {13, &client_receiver_list_teams},
         {14, &client_receiver_list_channels},
+
         {15, &client_receiver_list_threads},
         {16, &client_receiver_list_replies},
         {17, &client_receiver_list_messages},
