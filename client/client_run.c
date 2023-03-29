@@ -40,25 +40,51 @@ void client_command_handling(client_t *client)
         }
 }
 
-void client_run(client_t *client)
+int client_input_handling(char **input, client_t *client)
 {
-    char *input = NULL;
     size_t input_size = 0;
     ssize_t input_len = 0;
 
+    write(1, "> ", 2);
+    input_len = getline(input, &input_size, stdin);
+    if (input_len == -1)
+        return EXIT_FAILURE;
+    (*input)[input_len - 1] = '\0';
+    client->input_buffer = (*input);
+    client->input_buffer_size = input_size;
+    client_input(client);
+    if (client->input_args) {
+        client_command_handling(client);
+        free_str_array(client->input_args);
+    }
+    return EXIT_SUCCESS;
+}
+
+void client_read(client_t *client)
+{
+    printf("Reading...\n");
+    int number_of_bytes = 0;
+
+    read(client->socketFd, &number_of_bytes, 8);
+    printf("Number of bytes: %d\n", number_of_bytes);
+}
+
+void client_run(client_t *client)
+{
+    char *input = NULL;
+    fd_set readfds;
+    FD_ZERO(&readfds);
+    FD_SET(client->socketFd, &readfds);
+    FD_SET(0, &readfds);
+
     while (1) {
-        write(1, "> ", 2);
-        input_len = getline(&input, &input_size, stdin);
-        if (input_len == -1)
+        if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
-        input[input_len - 1] = '\0';
-        client->input_buffer = input;
-        client->input_buffer_size = input_size;
-        client_input(client);
-        if (client->input_args) {
-            client_command_handling(client);
-            free_str_array(client->input_args);
-        }
+        if (FD_ISSET(client->socketFd, &readfds))
+            client_read(client);
+        if (FD_ISSET(0, &readfds))
+            if (client_input_handling(&input, client))
+                break;
     }
     free(input);
 }
