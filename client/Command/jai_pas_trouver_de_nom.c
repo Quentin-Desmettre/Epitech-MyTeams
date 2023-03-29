@@ -10,8 +10,12 @@
 void client_use(client_t *client, char **args)
 {
     void *packet = create_packet(USE, NULL, NULL, 0);
-    for (int i = 1; args[i]; i++)
-        append_arg_to_packet(&packet, args[i], strlen(args[i]) + 1);
+    for (int i = 1; i < 3; i++) {
+		if (args[i] != NULL)
+            append_arg_to_packet(&packet, args[i], strlen(args[i]) + 1);
+		else
+			append_arg_to_packet(&packet, "", 1);
+	}
     send_packet(packet, client->socketFd, true);
 }
 

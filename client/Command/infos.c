@@ -30,8 +30,6 @@ void client_list(client_t *client, char **args)
 void client_info(client_t *client, char **args)
 {
     void *packet = create_packet(INFO, NULL, NULL, 0);
-    append_arg_to_packet(&packet, args[1],
-        strlen(args[1]) + 1);
     send_packet(packet, client->socketFd, true);
 }
 
