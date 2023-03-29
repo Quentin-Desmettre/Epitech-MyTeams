@@ -32,7 +32,7 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
 
     for (int i = 0; i < nb_args; i++) {
         arg_len = *(uint16_t *)(request + 11 + offset);
-        if (arg_len > buf_size - 13 - offset) {
+        if (arg_len + 11 + offset > buf_size) {
             free(args);
             return NULL;
         }
@@ -40,7 +40,7 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
         memcpy(arg, request + 13 + offset, arg_len);
         arg[arg_len] = 0;
         append_str_array(&args, arg);
-        offset += arg_len;
+        offset += 2 + arg_len;
     }
     return args;
 }
@@ -56,13 +56,12 @@ void handle_request(server_t *server, client_t *client)
         send_error(client, UNKNOWN_COMMAND, "");
     handler = &COMMANDS[cmd_id];
     args = get_request_arguments(client->buffer,
-                                client->buf_size, handler->nb_args);
+        client->buf_size, handler->nb_args);
     clear_client_buffer(client);
     if (!args && handler->nb_args != 0)
         return send_error(client, UNKNOWN_COMMAND, "");
     if (handler->requires_login && !client->logged_in)
         return send_error(client, UNAUTHORIZED, "");
-    printf("%lu\n", cmd_id);
     handler->handler(server, client, args);
     if (args)
         free_str_array(args);
