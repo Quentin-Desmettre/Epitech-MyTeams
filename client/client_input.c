@@ -86,14 +86,22 @@ void client_input(client_t *client)
 {
     int number_quotes = 0;
     char **args = get_args(client->input_buffer, &number_quotes);
+    int len = 0;
 
     client->input_args = args;
     if (!args)
         return;
+    if (args[0] == NULL) {
+        free_str_array(args);
+        client->input_args = NULL;
+        return;
+    }
     if (number_quotes % 2 != 0) {
         printf("Invalid number of quotes.\n");
         free_str_array(args);
         client->input_args = NULL;
         return;
     }
+    for (; client->input_args[len]; len++);
+    client->arg_count = len;
 }

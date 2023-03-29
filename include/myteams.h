@@ -209,5 +209,6 @@ void *create_packet(enum responses code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);
+void read_packet(void *packet, const char *params, ...);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

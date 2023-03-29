@@ -6,6 +6,7 @@
 */
 
 #include <unistd.h>
+#include <stdio.h>
 
 void safe_write(int fd, void *data, size_t len)
 {
