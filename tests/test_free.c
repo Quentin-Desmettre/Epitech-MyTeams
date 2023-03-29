@@ -20,16 +20,16 @@ Test(free_cases, free_case)
 
     free_message_list(NULL);
 
-    team_t *team = malloc(sizeof(team_t));
+    team_t *team = calloc(1, sizeof(team_t));
     team->users = NULL;
     team->channels = NULL;
     free_team(team);
 
-    channel_t *channel = malloc(sizeof(channel_t));
+    channel_t *channel = calloc(1, sizeof(channel_t));
     channel->threads = NULL;
     free_channel(channel);
 
-    thread_t *thread = malloc(sizeof(thread_t));
+    thread_t *thread = calloc(1, sizeof(thread_t));
     thread->replies = NULL;
     free_thread(thread);
 }

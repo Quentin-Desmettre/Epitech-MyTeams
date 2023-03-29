@@ -9,7 +9,7 @@
 
 static void restore_thread(channel_t *channel, int file)
 {
-    thread_t *thread = malloc(sizeof(thread_t));
+    thread_t *thread = calloc(1, sizeof(thread_t));
     thread_message_t *message;
     int nb_replies = 0;
 
@@ -20,7 +20,7 @@ static void restore_thread(channel_t *channel, int file)
     read(file, &nb_replies, sizeof(int));
     thread->replies = NULL;
     for (int i = 0; i < nb_replies; i++) {
-        message = malloc(sizeof(thread_message_t));
+        message = calloc(1, sizeof(thread_message_t));
         read(file, message->uuid_sender, sizeof(message->uuid_sender));
         read(file, message->content, sizeof(message->content));
         read(file, &message->timestamp, sizeof(time_t));
@@ -31,7 +31,7 @@ static void restore_thread(channel_t *channel, int file)
 
 static void restore_channel(team_t *team, int file)
 {
-    channel_t *channel = malloc(sizeof(channel_t));
+    channel_t *channel = calloc(1, sizeof(channel_t));
     int nb_threads;
 
     read(file, channel->uuid, sizeof(channel->uuid));
@@ -46,7 +46,7 @@ static void restore_channel(team_t *team, int file)
 
 static void restore_team(server_t *server, int file)
 {
-    team_t *team = malloc(sizeof(team_t));
+    team_t *team = calloc(1, sizeof(team_t));
     int nb_channels = 0;
     int subscribed_users;
     char uuid[sizeof(team->uuid)];
@@ -70,8 +70,9 @@ static void restore_team(server_t *server, int file)
 
 static void restore_message(server_t *server, int file)
 {
-    user_message_t *message = malloc(sizeof(user_message_t));
-    void *key = malloc(sizeof(message->uuid_sender)
+    return;
+    user_message_t *message = calloc(1, sizeof(user_message_t));
+    void *key = calloc(1, sizeof(message->uuid_sender)
             + sizeof(message->uuid_receiver));
 
     read(file, message, sizeof(user_message_t));
@@ -94,7 +95,7 @@ void restore_server(server_t *server)
         restore_team(server, file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
-        user = malloc(sizeof(user_t));
+        user = calloc(sizeof(user_t), 1);
         read(file, user, sizeof(user_t));
         server_event_user_loaded(user->uuid, user->name);
         map_add(server->users_by_uuid, user->uuid, user);

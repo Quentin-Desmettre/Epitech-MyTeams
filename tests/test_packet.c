@@ -70,7 +70,7 @@ Test(append_arg_to_packet, append_arg_to_packet, .init = setup, .fini = teardown
 
 Test(send_packet, send_packet, .init = setup, .fini = teardown)
 {
-    void *packet = malloc(sizeof(uint64_t) + 4);
+    void *packet = calloc(1, sizeof(uint64_t) + 4);
     char dup_packet[sizeof(uint64_t) + 4];
     char content[sizeof(uint64_t) + 4];
     int fd = open("test", O_CREAT | O_RDWR, 0666);

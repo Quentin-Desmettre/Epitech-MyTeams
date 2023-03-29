@@ -10,7 +10,7 @@
 
 void append_node(list_t **begin, void *data)
 {
-    list_t *node = malloc(sizeof(list_t));
+    list_t *node = calloc(1, sizeof(list_t));
 
     node->data = data;
     if (!(*begin)) {

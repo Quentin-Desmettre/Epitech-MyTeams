@@ -7,25 +7,6 @@
 
 #include "client.h"
 
-char *clean_command(char *command)
-{
-    char *new_command = malloc(sizeof(char) * (strlen(command) + 1));
-    int nb_char = 0;
-
-    for (int i = 0; command[i]; i++) {
-        if (command[i] == ' ' || command[i] == '\t' || command[i] == '\n' ||
-            command[i] == '\r' || command[i] == '\v' || command[i] == '\f' ||
-            command[i] == '"')
-            continue;
-        new_command[nb_char] = command[i];
-        nb_char++;
-    }
-    new_command = realloc(new_command, sizeof(char) * (nb_char + 1));
-    new_command[nb_char] = '\0';
-    free(command);
-    return new_command;
-}
-
 void client_command_handling(client_t *client)
 {
     client->input_args[0] = clean_command(client->input_args[0]);
@@ -89,7 +70,7 @@ int client_read(client_t *client)
         return 0;
     if (bytes == 0)
         return -1;
-    tmp_buf = malloc(bytes);
+    tmp_buf = calloc(1, bytes);
     if (read(client->socketFd, tmp_buf, bytes) != bytes)
         return free(tmp_buf), 0;
     client->buffer = realloc(client->buffer, client->buf_size + bytes);
@@ -112,9 +93,8 @@ void client_run(client_t *client)
     FD_SET(0, &readfds);
         if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
-        if (FD_ISSET(client->socketFd, &readfds))
-            if (client_read(client))
-                break;
+        if (FD_ISSET(client->socketFd, &readfds) && client_read(client))
+            break;
         if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
             break;
     }

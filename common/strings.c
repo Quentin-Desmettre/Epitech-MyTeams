@@ -38,7 +38,7 @@ void free_str_array(char **array)
 
 void *memdup(void *src, size_t size)
 {
-    void *dst = malloc(size);
+    void *dst = calloc(1, size);
 
     memcpy(dst, src, size);
     return (dst);
@@ -48,7 +48,7 @@ char **strarr(char *str, char *delim)
 {
     if (str == NULL || strlen(str) == 0)
         return NULL;
-    char **arr = malloc(sizeof(char *) * 2);
+    char **arr = calloc(1, sizeof(char *) * 2);
     char *token = strtok(str, delim);
 
     if (!token) {

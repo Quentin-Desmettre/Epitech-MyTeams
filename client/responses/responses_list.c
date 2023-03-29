@@ -22,7 +22,8 @@ void client_receiver_list_threads(client_t *client)
 	do {
 		read_packet(it->data, "sstss", &uuid, &uuid_creator,
 			&timestamp, &title, &message);
-		client_print_thread(uuid, uuid_creator, timestamp, title, message);
+        client_channel_print_threads(uuid,
+        uuid_creator, timestamp, title, message);
 		it = it->next;
 	} while ((it != packets));
 }
@@ -43,7 +44,7 @@ void client_receiver_list_messages(client_t *client)
 	if (!packets)
 		return;
 	do {
-		read_packet(packets->data, "sts", &uuid, &timestamp, &content);
+		read_packet(it->data, "sts", &uuid, &timestamp, &content);
 		client_private_message_print_messages(uuid, timestamp, content);
 		it = it->next;
 	} while ((it != packets));
@@ -55,7 +56,7 @@ void client_receiver_list_users(client_t *client)
 	list_t *it = packets;
 	char *uuid;
 	char *name;
-	uint64_t status;
+	int status;
 
 	if (!packets)
 		return;
@@ -78,7 +79,7 @@ void client_receiver_list_teams(client_t *client)
 		return;
 	do {
 		read_packet(it->data, "sss", &uuid, &name, &description);
-		client_print_team(uuid, name, description);
+		client_print_teams(uuid, name, description);
 		it = it->next;
 	} while ((it != packets));
 }
@@ -95,7 +96,7 @@ void client_receiver_list_channels(client_t *client)
 		return;
 	do {
 		read_packet(it->data, "sss", &uuid, &name, &description);
-		client_print_channel(uuid, name, description);
+		client_team_print_channels(uuid, name, description);
 		it = it->next;
 	} while ((it != packets));
 }

@@ -9,7 +9,7 @@
     #define EPITECH_MYTEAMS_CLIENT_H
 
     #include "myteams.h"
-	#include "logging_client.h"
+    #include "logging_client.h"
 
 typedef struct client_context {
     char team_uuid[UUID_LENGTH + 1];
@@ -154,5 +154,7 @@ static const command_receiver_t RESPONSES[] = {
         {30, &client_receiver_user_unsubscribed},
         {31, NULL}
 };
+
+char *clean_command(char *command);
 
 #endif //EPITECH_MYTEAMS_CLIENT_H
