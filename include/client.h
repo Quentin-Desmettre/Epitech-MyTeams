@@ -82,4 +82,28 @@ static const command_t COMMANDS[] = {
         {15, NULL, 0, 0, NULL}
 };
 
+typedef struct command_receiver {
+    int id;
+    void (*func)(client_t *);
+} command_receiver_t;
+
+static const command_receiver_t COMMANDS[] = {
+        {0, &client_receiver_login},
+        {1, &client_receiver_logout},
+        {2, &client_receiver_users},
+        {3, &client_receiver_user},
+        {4, &client_receiver_send},
+        {5, &client_receiver_messages},
+        {6, &client_receiver_subscribe},
+        {7, &client_receiver_subscribed},
+        {8, &client_receiver_unsubscribe},
+        {9, &client_receiver_use},
+        {10, &client_receiver_create},
+        {11, &client_receiver_list},
+        {12, &client_receiver_info},
+        {13, &client_receiver_help},
+        {14, &client_receiver_exit},
+        {15, NULL, 0, 0, NULL}
+};
+
 #endif //EPITECH_MYTEAMS_CLIENT_H
