@@ -102,6 +102,9 @@ void client_receiver_thread_created_u(client_t *client);
 void client_receiver_list_users(client_t *client);
 void client_receiver_list_teams(client_t *client);
 void client_receiver_list_channels(client_t *client);
+void client_receiver_list_threads(client_t *client);
+void client_receiver_list_replies(client_t *client);
+void client_receiver_list_messages(client_t *client);
 
 static const command_receiver_t RESPONSES[] = {
         {0, &client_receiver_help},
