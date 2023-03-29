@@ -58,12 +58,13 @@ void handle_request(server_t *server, client_t *client)
     args = get_request_arguments(client->buffer,
                                 client->buf_size, handler->nb_args);
     clear_client_buffer(client);
-    if (!args && handler->nb_args > 0)
+    if (!args && handler->nb_args != 0)
         return send_error(client, UNKNOWN_COMMAND, "");
     if (handler->requires_login && !client->logged_in)
         return send_error(client, UNAUTHORIZED, "");
     handler->handler(server, client, args);
-    free_str_array(args);
+    if (args)
+        free_str_array(args);
 }
 
 void handle_client_input(server_t *server, int fd)
