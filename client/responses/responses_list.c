@@ -34,7 +34,19 @@ void client_receiver_list_replies(client_t *client)
 
 void client_receiver_list_messages(client_t *client)
 {
+	list_t *packets = read_packet_list(client->buffer, "sts");
+	list_t *it = packets;
+	char *uuid;
+	time_t timestamp;
+	char *content;
 
+	if (!packets)
+		return;
+	do {
+		read_packet(packets->data, "sts", &uuid, &timestamp, &content);
+		client_private_message_print_messages(uuid, timestamp, content);
+		it = it->next;
+	} while ((it != packets));
 }
 
 void client_receiver_list_users(client_t *client)
@@ -45,13 +57,11 @@ void client_receiver_list_users(client_t *client)
 	char *name;
 	uint64_t status;
 
-	printf("Packets: %p\n", packets);
 	if (!packets)
 		return;
-	printf("Users:\n");
 	do {
-		read_packet(packets->data, "ssi", &uuid, &name, &status);
-		client_print_users(&uuid, &name, status);
+		read_packet(it->data, "ssi", &uuid, &name, &status);
+		client_print_users(uuid, name, status);
 		it = it->next;
 	} while ((it != packets));
 }
