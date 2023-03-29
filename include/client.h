@@ -29,6 +29,9 @@ typedef struct client {
     int arg_count;
     size_t input_buffer_size;
 
+    void *buffer;
+    size_t buf_size;
+
 } client_t;
 
 client_t *client_init(char *server_ip, char *server_port);

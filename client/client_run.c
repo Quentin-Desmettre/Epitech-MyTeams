@@ -77,24 +77,51 @@ void client_logout_received(void *buffer)
     client_event_logged_out(uuid);
 }
 
+void handle_action(client_t *client)
+{
+    uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
+    char **args = NULL;
+
+    if (cmd_id >= NB_COMMANDS)
+        return;
+
+    //handler = &COMMANDS[cmd_id];
+    //args = get_request_arguments(client->buffer, client->buf_size, handler->nb_args);
+    //clear_client_buffer(client);
+    if (cmd_id == 1)
+        client_login_received(client->buffer);
+    if (cmd_id == 2)
+        client_logout_received(client->buffer);
+    free(client->buffer);
+    client->buffer = NULL;
+    client->buf_size = 0;
+    //if (!args && handler->nb_args != 0)
+    //    return send_error(client, UNKNOWN_COMMAND, "");
+    //if (handler->requires_login && !client->logged_in)
+    //    return send_error(client, UNAUTHORIZED, "");
+    //handler->handler(server, client, args);
+    if (args)
+        free_str_array(args);
+}
+
 int client_read(client_t *client)
 {
     int bytes = bytes_available(client->socketFd);
-    void *buffer = NULL;
+    char *tmp_buf;
 
     if (bytes < 0)
-        return -1;
-    if (bytes == 0)
         return 0;
-    buffer = malloc(bytes);
-    if (read(client->socketFd, buffer, bytes) != bytes)
-        return free(buffer), 0;
-    uint8_t cmd_id = ((uint8_t *)buffer)[8];
-    if (cmd_id == 1)
-        client_login_received(buffer);
-    if (cmd_id == 2)
-        client_logout_received(buffer);
-    free(buffer);
+    if (bytes == 0)
+        return -1;
+    tmp_buf = malloc(bytes);
+    if (read(client->socketFd, tmp_buf, bytes) != bytes)
+        return free(tmp_buf), 0;
+    client->buffer = realloc(client->buffer, client->buf_size + bytes);
+    memcpy(client->buffer + client->buf_size, tmp_buf, bytes);
+    client->buf_size += bytes;
+    free(tmp_buf);
+    if (client->buf_size >= 8 && client->buf_size >= *(size_t *)client->buffer)
+        handle_action(client);
     return 0;
 }
 
