@@ -55,21 +55,34 @@ static void save_team(team_t *team, int file)
     }
 }
 
-// TODO: fix saving of messages
+static void save_message_list(const char *uuid_pair, list_t *messages, int fd)
+{
+    int nb_messages = list_size(messages);
+    list_t *elem = messages;
+    user_message_t *message;
+
+    write(fd, uuid_pair, UUID_PAIR_LEN);
+    write(fd, &nb_messages, sizeof(int));
+    for (int i = 0; i < nb_messages; i++, elem = elem->next) {
+        message = elem->data;
+        write(fd, message, sizeof(user_message_t));
+    }
+}
+
 void save_server(server_t *server)
 {
     int file = open("server.db", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
     if (file < 0)
         return;
-    write(file, &server->teams->size, sizeof(int));
-    for (int i = 0; i < server->teams->size; i++)
-        save_team(server->teams->elems[i].value, file);
     write(file, &server->users_by_name->size, sizeof(int));
     for (int i = 0; i < server->users_by_name->size; i++)
         write(file, server->users_by_name->elems[i].value, sizeof(user_t));
+    write(file, &server->teams->size, sizeof(int));
+    for (int i = 0; i < server->teams->size; i++)
+        save_team(server->teams->elems[i].value, file);
     write(file, &server->messages->size, sizeof(int));
-    return;
     for (int i = 0; i < server->messages->size; i++)
-        write(file, server->messages->elems[i].value, sizeof(user_message_t));
+        save_message_list(server->messages->elems[i].key,
+                            server->messages->elems[i].value, file);
 }
