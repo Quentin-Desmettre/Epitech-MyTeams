@@ -13,10 +13,10 @@ static bool fetch_arg_len(void *packet,
 {
     const uint64_t packet_size = ((uint64_t *)packet)[0];
 
-    if (11 + offset + 2 > packet_size)
+    if ((uint64_t)(11 + offset + 2) > packet_size)
         return false;
     *arg_len = *(uint16_t *)(packet + 11 + offset);
-    if (11 + offset + 2 + *arg_len > packet_size)
+    if ((uint64_t)(11 + offset + 2 + *arg_len) > packet_size)
         return false;
     if (param == 't' && *arg_len != sizeof(time_t))
         return false;
@@ -53,8 +53,10 @@ bool read_packet(void *packet, const char *params, ...)
         return false;
     va_start(ap, params);
     for (int i = 0; params[i]; i++) {
-        if (!read_arg(packet, &offset, params[i], &ap))
+        if (!read_arg(packet, &offset, params[i], &ap)) {
+            printf("Failed to read packet\n");
             return false;
+        }
     }
     va_end(ap);
     return true;
@@ -66,7 +68,7 @@ static void *fetch_current_packet(void *packet,
     void *tmp_packet = create_packet(0, NULL, NULL, 0);
     uint16_t arg_len;
 
-    for (int j = 0; j < strlen(packet_content); j++) {
+    for (size_t j = 0; j < strlen(packet_content); j++) {
         if (!fetch_arg_len(packet, &arg_len, *offset, packet_content[j]))
             return NULL;
         append_arg_to_packet(&tmp_packet, packet + 13 + *offset, arg_len);

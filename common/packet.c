@@ -18,7 +18,7 @@ void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
     ((uint64_t *)(*packet))[0] += 2 + arg_len;
 }
 
-void *create_packet(enum responses code, const void **args,
+void *create_packet(int code, const void **args,
         const int args_lens[], int nb_args)
 {
     void *packet = calloc(11, 1);
