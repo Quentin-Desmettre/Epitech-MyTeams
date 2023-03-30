@@ -19,8 +19,9 @@ void client_receiver_list_replies(client_t *client)
     if (!packets)
         return;
     do {
-        read_packet(it->data, "ssts", &thread_uuid, &user_uuid,
-            &reply_timestamp, &reply_body);
+        if (!read_packet(it->data, "ssts", &thread_uuid, &user_uuid,
+            &reply_timestamp, &reply_body))
+            return;
         client_thread_print_replies(thread_uuid, user_uuid,
             reply_timestamp, reply_body);
         it = it->next;
@@ -53,8 +54,9 @@ void client_receiver_reply_created_g(UNUSED client_t *client)
     char *user_uuid = NULL;
     char *reply_body = NULL;
 
-    read_packet(client->buffer, "ssss", &team_uuid, &thread_uuid,
-        &user_uuid, &reply_body);
+    if (!read_packet(client->buffer, "ssss", &team_uuid, &thread_uuid,
+        &user_uuid, &reply_body))
+        return;
     client_event_thread_reply_received(team_uuid, thread_uuid, user_uuid,
         reply_body);
 }
@@ -66,8 +68,9 @@ void client_receiver_reply_created_u(client_t *client)
     time_t reply_timestamp = 0;
     char *reply_body = NULL;
 
-    read_packet(client->buffer, "ssts", &thread_uuid, &user_uuid,
-        &reply_timestamp, &reply_body);
+    if (!read_packet(client->buffer, "ssts", &thread_uuid, &user_uuid,
+        &reply_timestamp, &reply_body))
+        return;
     client_print_reply_created(thread_uuid, user_uuid, reply_timestamp,
         reply_body);
 }
