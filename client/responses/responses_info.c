@@ -7,11 +7,6 @@
 
 #include "client.h"
 
-void client_receiver_list_replies(client_t *client)
-{
-
-}
-
 void client_receiver_user_info(client_t *client)
 {
     char *uuid;
