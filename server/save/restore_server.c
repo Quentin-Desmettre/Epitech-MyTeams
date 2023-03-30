@@ -27,6 +27,7 @@ static void restore_thread(channel_t *channel, int file)
         append_node(&thread->replies, message);
     }
     map_add(channel->threads, thread->uuid, thread);
+    printf("Thread restored: %s (%s)\n", thread->title, thread->uuid);
 }
 
 static void restore_channel(team_t *team, int file)
@@ -42,6 +43,7 @@ static void restore_channel(team_t *team, int file)
     for (int i = 0; i < nb_threads; i++)
         restore_thread(channel, file);
     map_add(team->channels, channel->uuid, channel);
+    printf("Channel restored: %s (%s)\n", channel->name, channel->uuid);
 }
 
 static void restore_team(server_t *server, int file)
@@ -50,7 +52,6 @@ static void restore_team(server_t *server, int file)
     int nb_channels = 0;
     int subscribed_users;
     char uuid[sizeof(team->uuid)];
-
     read(file, team->uuid, sizeof(team->uuid));
     read(file, team->name, sizeof(team->name));
     read(file, team->description, sizeof(team->description));
@@ -66,6 +67,7 @@ static void restore_team(server_t *server, int file)
         append_node(&team->users, memdup(uuid, sizeof(uuid)));
     }
     map_add(server->teams, team->uuid, team);
+    printf("Team restored: %s (%s)\n", team->name, team->uuid);
 }
 
 static void restore_message(server_t *server, int file)
@@ -91,9 +93,6 @@ void restore_server(server_t *server)
     if (file < 0)
         return;
     read(file, &nb, sizeof(int));
-    for (int i = 0; i < nb; i++)
-        restore_team(server, file);
-    read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
         user = calloc(sizeof(user_t), 1);
         read(file, user, sizeof(user_t));
@@ -101,6 +100,9 @@ void restore_server(server_t *server)
         map_add(server->users_by_uuid, user->uuid, user);
         map_add(server->users_by_name, user->name, user);
     }
+    read(file, &nb, sizeof(int));
+    for (int i = 0; i < nb; i++)
+        restore_team(server, file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++)
         restore_message(server, file);
