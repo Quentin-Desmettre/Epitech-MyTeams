@@ -7,21 +7,29 @@
 
 #include "server.h"
 
+static user_t *generate_user(server_t *server, char **args)
+{
+    user_t *user = calloc(sizeof(user_t), 1);
+
+    generate_uuid(user->uuid);
+    strcpy(user->name, args[0]);
+    server_event_user_created(user->uuid, user->name);
+    map_add(server->users_by_name, user->name, user);
+    map_add(server->users_by_uuid, user->uuid, user);
+    return user;
+}
+
 void login_handler(server_t *server, client_t *client, char **args)
 {
     user_t *user = map_get(server->users_by_name, args[0]); void *packet;
+
     if (client->user)
         logout_handler(server, client, NULL);
     if (strlen(args[0]) > MAX_NAME_LENGTH)
         return send_error(client, UNAUTHORIZED, NULL);
-    if (!user) {
-        user = calloc(sizeof(user_t), 1);
-        generate_uuid(user->uuid);
-        strcpy(user->name, args[0]);
-        server_event_user_created(user->uuid, user->name);
-        map_add(server->users_by_name, user->name, user);
-        map_add(server->users_by_uuid, user->uuid, user);
-    } if (!map_get(server->clients_by_uuid, user->uuid)) {
+    if (!user)
+        user = generate_user(server, args);
+    if (!map_get(server->clients_by_uuid, user->uuid)) {
         map_add(server->clients_by_uuid, user->uuid, client);
         client->is_in_uuid_map = true;
     }
