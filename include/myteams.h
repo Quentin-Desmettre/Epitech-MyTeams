@@ -206,7 +206,7 @@ char **strarr(char *str, char *delim);
 
 // Packet
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
-void *create_packet(enum responses code, const void **args,
+void *create_packet(int code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);

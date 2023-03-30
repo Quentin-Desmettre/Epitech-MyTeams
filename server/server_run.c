@@ -32,7 +32,7 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
 
     for (int i = 0; i < nb_args; i++) {
         arg_len = *(uint16_t *)(request + 11 + offset);
-        if (arg_len + 11 + offset > buf_size) {
+        if ((size_t)(arg_len + 11 + offset) > buf_size) {
             free(args);
             return NULL;
         }
