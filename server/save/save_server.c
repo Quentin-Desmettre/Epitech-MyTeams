@@ -55,6 +55,7 @@ static void save_team(team_t *team, int file)
     }
 }
 
+// TODO: fix saving of messages
 void save_server(server_t *server)
 {
     int file = open("server.db", O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -68,6 +69,7 @@ void save_server(server_t *server)
     for (int i = 0; i < server->users_by_name->size; i++)
         write(file, server->users_by_name->elems[i].value, sizeof(user_t));
     write(file, &server->messages->size, sizeof(int));
+    return;
     for (int i = 0; i < server->messages->size; i++)
         write(file, server->messages->elems[i].value, sizeof(user_message_t));
 }

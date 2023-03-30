@@ -9,9 +9,8 @@ rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 
 SOURCEDIR = ./
 SOURCEDIR_SERVER = ../server
-SOURCEDIR_CLIENT = ../client
 
-SRC_TMP = $(call rwildc,$(SOURCEDIR_SERVER),*.c) $(call rwildc,$(SOURCEDIR_CLIENT),*.c) $(call rwildc,../common/,*.c)
+SRC_TMP = $(call rwildc,$(SOURCEDIR_SERVER),*.c) $(call rwildc,../common/,*.c)
 SRC = $(filter-out $(call rwildc,..,main.c), $(SRC_TMP)) $(call rwildc,$(SOURCEDIR),*.c)
 
 CC = gcc

@@ -9,6 +9,7 @@
     #define EPITECH_MYTEAMS_CLIENT_H
 
     #include "myteams.h"
+    #include "logging_client.h"
 
 typedef struct client_context {
     char team_uuid[UUID_LENGTH + 1];
@@ -28,6 +29,9 @@ typedef struct client {
     char **input_args;
     int arg_count;
     size_t input_buffer_size;
+
+    void *buffer;
+    size_t buf_size;
 
 } client_t;
 
@@ -53,7 +57,6 @@ void client_login(client_t *client, char **args);
 void client_logout(client_t *client, char **args);
 
 typedef struct command {
-    int id;
     char *name;
     int min_args;
     int max_args;
@@ -61,22 +64,97 @@ typedef struct command {
 } command_t;
 
 static const command_t COMMANDS[] = {
-        {0, "/login", 2, 2, &client_login},
-        {1, "/logout", 1, 1, &client_logout},
-        {2, "/users", 1, 1, &client_users},
-        {3, "/user", 2, 2, &client_user},
-        {4, "/send", 3, 3, &client_send},
-        {5, "/messages", 2, 2, &client_messages},
-        {6, "/subscribe", 2, 2, &client_subscribe},
-        {7, "/subscribed", 1, 1, &client_subscribed},
-        {8, "/unsubscribe", 2, 2, &client_unsubscribe},
-        {9, "/use", 2, 2, &client_use},
-        {10, "/create", 3, 3, &client_create},
-        {11, "/list", 1, 1, &client_list},
-        {12, "/info", 2, 2, &client_info},
-        {13, "/help", 1, 1, &client_help},
-        {14, "/exit", 1, 1, &client_exit},
-        {15, NULL, 0, 0, NULL}
+        {"/login", 2, 2, &client_login},
+        {"/logout", 1, 1, &client_logout},
+        {"/users", 1, 1, &client_users},
+        {"/user", 2, 2, &client_user},
+        {"/send", 3, 3, &client_send},
+        {"/messages", 2, 2, &client_messages},
+        {"/subscribe", 2, 2, &client_subscribe},
+        {"/subscribed", 1, 2, &client_subscribed},
+        {"/unsubscribe", 2, 2, &client_unsubscribe},
+        {"/use", 1, 4, &client_use},
+        {"/create", 2, 3, &client_create},
+        {"/list", 1, 1, &client_list},
+        {"/info", 1, 1, &client_info},
+        {"/help", 1, 1, &client_help},
+        {"/exit", 1, 1, &client_exit},
+        {NULL, 0, 0, NULL}
 };
+
+typedef struct command_receiver {
+    int id;
+    void (*func)(client_t *);
+} command_receiver_t;
+
+void client_receiver_logged_in(client_t *client);
+void client_receiver_logged_out(client_t *client);
+void client_receiver_help(client_t *client);
+void client_receiver_message_received(client_t *client);
+void client_receiver_reply_created_g(UNUSED client_t *client);
+void client_receiver_reply_created_u(UNUSED client_t *client);
+void client_receiver_team_created_g(client_t *client);
+void client_receiver_team_created_u(client_t *client);
+void client_receiver_channel_created_g(client_t *client);
+void client_receiver_channel_created_u(client_t *client);
+void client_receiver_thread_created_g(client_t *client);
+void client_receiver_thread_created_u(client_t *client);
+void client_receiver_list_users(client_t *client);
+void client_receiver_list_teams(client_t *client);
+void client_receiver_list_channels(client_t *client);
+void client_receiver_list_threads(client_t *client);
+void client_receiver_list_replies(client_t *client);
+void client_receiver_list_messages(client_t *client);
+void client_receiver_unknown_team(client_t *client);
+void client_receiver_unknown_channel(client_t *client);
+void client_receiver_unknown_thread(client_t *client);
+void client_receiver_unknown_user(client_t *client);
+void client_receiver_unauthorized(client_t *client);
+void client_receiver_unknown_command(client_t *client);
+void client_receiver_already_exist(client_t *client);
+void client_receiver_user_info(client_t *client);
+void client_receiver_team_info(client_t *client);
+void client_receiver_channel_info(client_t *client);
+void client_receiver_thread_info(client_t *client);
+void client_receiver_user_subscribed(client_t *client);
+void client_receiver_user_unsubscribed(client_t *client);
+
+static const command_receiver_t RESPONSES[] = {
+        {0, &client_receiver_help},
+        {1, &client_receiver_logged_in},
+        {2, &client_receiver_logged_out},
+        {3, &client_receiver_message_received},
+        {4, &client_receiver_reply_created_g},
+        {5, &client_receiver_reply_created_u},
+        {6, &client_receiver_team_created_g},
+        {7, &client_receiver_team_created_u},
+        {8, &client_receiver_channel_created_g},
+        {9, &client_receiver_channel_created_u},
+        {10, &client_receiver_thread_created_g},
+        {11, &client_receiver_thread_created_u},
+        {12, &client_receiver_list_users},
+        {13, &client_receiver_list_teams},
+        {14, &client_receiver_list_channels},
+
+        {15, &client_receiver_list_threads},
+        {16, &client_receiver_list_replies},
+        {17, &client_receiver_list_messages},
+        {18, &client_receiver_unknown_team},
+        {19, &client_receiver_unknown_channel},
+        {20, &client_receiver_unknown_thread},
+        {21, &client_receiver_unknown_user},
+        {22, &client_receiver_unauthorized},
+        {23, &client_receiver_unknown_command},
+        {24, &client_receiver_already_exist},
+        {25, &client_receiver_user_info},
+        {26, &client_receiver_team_info},
+        {27, &client_receiver_channel_info},
+        {28, &client_receiver_thread_info},
+        {29, &client_receiver_user_subscribed},
+        {30, &client_receiver_user_unsubscribed},
+        {31, NULL}
+};
+
+char *clean_command(char *command);
 
 #endif //EPITECH_MYTEAMS_CLIENT_H

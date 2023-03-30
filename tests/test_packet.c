@@ -68,21 +68,9 @@ Test(append_arg_to_packet, append_arg_to_packet, .init = setup, .fini = teardown
     free(packet);
 }
 
-Test(is_error, is_error, .init = setup, .fini = teardown)
-{
-    cr_assert_eq(is_error(UNKNOWN_TEAM), true);
-    cr_assert_eq(is_error(UNKNOWN_CHANNEL), true);
-    cr_assert_eq(is_error(UNKNOWN_THREAD), true);
-    cr_assert_eq(is_error(UNKNOWN_USER), true);
-    cr_assert_eq(is_error(UNAUTHORIZED), true);
-    cr_assert_eq(is_error(UNKNOWN_COMMAND), true);
-    cr_assert_eq(is_error(ALREADY_EXIST), true);
-    cr_assert_eq(is_error(EV_LIST_MESSAGES), false);
-}
-
 Test(send_packet, send_packet, .init = setup, .fini = teardown)
 {
-    void *packet = malloc(sizeof(uint64_t) + 4);
+    void *packet = calloc(1, sizeof(uint64_t) + 4);
     char dup_packet[sizeof(uint64_t) + 4];
     char content[sizeof(uint64_t) + 4];
     int fd = open("test", O_CREAT | O_RDWR, 0666);

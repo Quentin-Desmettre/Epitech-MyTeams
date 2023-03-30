@@ -27,6 +27,7 @@
     #include <fcntl.h>
     #include "linked_list.h"
     #include "map.h"
+    #include <stdio.h>
     #include <uuid/uuid.h>
     #define UNUSED __attribute__((unused))
     #define MAX_CLIENTS 100
@@ -148,6 +149,7 @@ enum responses {
     EV_THREAD_INFO,
     USER_SUBSCRIBED,
     USER_UNSUBSCRIBED,
+    NB_RESPONSES
 };
 
 static const int NB_ARGS_FOR_RESPONSE[] = {
@@ -203,12 +205,31 @@ void generate_uuid(char uuid[R_UUID_LENGTH]);
 char **strarr(char *str, char *delim);
 
 // Packet
-bool is_error(enum responses code);
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
 void *create_packet(enum responses code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);
-void read_packet(void *packet, const char *params, ...);
+
+/**
+ * @brief Read a packet and fill the given arguments
+ * @param packet The packet
+ * @param params The parameters to read, 's' for string and 't' for time_t.
+ * Example: "sst" for 2 strings and 1 time_t, in this order.
+ * @param ... The arguments to fill, should be pointers to string (char **) and
+ * pointer to time_t (time_t *).
+ * @return true if the packet was read successfully, false otherwise.
+ */
+bool read_packet(void *packet, const char *params, ...);
+
+/**
+ * @brief Split a packet into a list of packet, containing the arguments.
+ * @param packet The orginal packet
+ * @param packet_content The content of each sub-packet packet, as a string.
+ * If a sub packet contains two strings and a time_t, the string should be
+ * "sst".
+ * @return list_t* if it worked, else NULL in case of error
+ */
+list_t *read_packet_list(void *packet, char const *packet_content);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

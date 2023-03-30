@@ -7,25 +7,6 @@
 
 #include "client.h"
 
-char *clean_command(char *command)
-{
-    char *new_command = malloc(sizeof(char) * (strlen(command) + 1));
-    int nb_char = 0;
-
-    for (int i = 0; command[i]; i++) {
-        if (command[i] == ' ' || command[i] == '\t' || command[i] == '\n' ||
-            command[i] == '\r' || command[i] == '\v' || command[i] == '\f' ||
-            command[i] == '"')
-            continue;
-        new_command[nb_char] = command[i];
-        nb_char++;
-    }
-    new_command = realloc(new_command, sizeof(char) * (nb_char + 1));
-    new_command[nb_char] = '\0';
-    free(command);
-    return new_command;
-}
-
 void client_command_handling(client_t *client)
 {
     client->input_args[0] = clean_command(client->input_args[0]);
@@ -60,13 +41,45 @@ int client_input_handling(char **input, client_t *client)
     return EXIT_SUCCESS;
 }
 
-void client_read(client_t *client)
+void handle_action(client_t *client)
 {
-    printf("Reading...\n");
-    int number_of_bytes = 0;
+    uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
+    char **args = NULL;
+    const command_receiver_t *handler = NULL;
 
-    read(client->socketFd, &number_of_bytes, 8);
-    printf("Number of bytes: %d\n", number_of_bytes);
+    if (cmd_id >= NB_RESPONSES) {
+        printf("Invalid command id: %d\n", cmd_id);
+        return;
+    }
+
+    handler = &RESPONSES[cmd_id];
+    handler->func(client);
+    free(client->buffer);
+    client->buffer = NULL;
+    client->buf_size = 0;
+    if (args)
+        free_str_array(args);
+}
+
+int client_read(client_t *client)
+{
+    int bytes = bytes_available(client->socketFd);
+    char *tmp_buf;
+
+    if (bytes < 0)
+        return 0;
+    if (bytes == 0)
+        return 0;
+    tmp_buf = calloc(1, bytes);
+    if (read(client->socketFd, tmp_buf, bytes) != bytes)
+        return free(tmp_buf), 0;
+    client->buffer = realloc(client->buffer, client->buf_size + bytes);
+    memcpy(client->buffer + client->buf_size, tmp_buf, bytes);
+    client->buf_size += bytes;
+    free(tmp_buf);
+    if (client->buf_size >= 8 && client->buf_size >= *(size_t *)client->buffer)
+        handle_action(client);
+    return 0;
 }
 
 void client_run(client_t *client)
@@ -75,13 +88,15 @@ void client_run(client_t *client)
     fd_set readfds;
 
     while (1) {
-    FD_ZERO(&readfds);
-    FD_SET(client->socketFd, &readfds);
-    FD_SET(0, &readfds);
+        FD_ZERO(&readfds);
+        FD_SET(client->socketFd, &readfds);
+        FD_SET(0, &readfds);
         if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
-        if (FD_ISSET(client->socketFd, &readfds))
+        if (FD_ISSET(client->socketFd, &readfds)) {
             client_read(client);
+            continue;
+        }
         if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
             break;
     }

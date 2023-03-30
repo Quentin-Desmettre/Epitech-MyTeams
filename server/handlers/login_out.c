@@ -9,9 +9,11 @@
 
 void login_handler(server_t *server, client_t *client, char **args)
 {
-    user_t *user = map_get(server->users_by_name, args[0]);
-    void *packet;
-
+    user_t *user = map_get(server->users_by_name, args[0]); void *packet;
+    if (client->user)
+        logout_handler(server, client, NULL);
+    if (strlen(args[0]) > MAX_NAME_LENGTH)
+        return send_error(client, UNAUTHORIZED, NULL);
     if (!user) {
         user = calloc(sizeof(user_t), 1);
         generate_uuid(user->uuid);
@@ -20,9 +22,9 @@ void login_handler(server_t *server, client_t *client, char **args)
         map_add(server->users_by_name, user->name, user);
         map_add(server->users_by_uuid, user->uuid, user);
     }
+    map_add(server->clients_by_uuid, user->uuid, client);
     server_event_user_logged_in(user->uuid);
-    client->logged_in = true;
-    client->user = user;
+    client->logged_in = true;client->user = user;
     packet = create_packet(EV_LOGGED_IN, NULL, NULL, 0);
     append_arg_to_packet(&packet, user->uuid, sizeof(user->uuid));
     append_arg_to_packet(&packet, user->name, strlen(user->name) + 1);
@@ -36,7 +38,9 @@ void logout_handler(server_t *server, client_t *client, UNUSED char **args)
 
     append_arg_to_packet(&packet, user->uuid, sizeof(user->uuid));
     append_arg_to_packet(&packet, user->name, strlen(user->name) + 1);
-    map_remove(server->clients_by_uuid, user->uuid);
     server_event_user_logged_out(user->uuid);
     send_packet(packet, client->fd, true);
+    client->logged_in = false;
+    client->user = NULL;
+    map_remove(server->clients_by_uuid, user->uuid);
 }

@@ -53,7 +53,7 @@ void create_thread(server_t *server, client_t *cli,
     if (thread_exists(th_name, cli->context.channel))
         return send_error(cli, ALREADY_EXIST, "");
     th = calloc(sizeof(thread_t), 1);generate_uuid(th->uuid);
-    th->timestamp = clock() / CLOCKS_PER_SEC;
+    th->timestamp = time(NULL);
     memcpy(th->title, th_name, strlen(th_name) + 1);
     memcpy(th->message, th_desc, strlen(th_desc) + 1);
     memcpy(th->uuid_creator, cli->user->uuid, sizeof(cli->user->uuid));
@@ -72,7 +72,7 @@ void create_reply(server_t *server, client_t *cli, const char *re_msg)
     re = calloc(sizeof(thread_message_t), 1);
     memcpy(re->uuid_sender, cli->user->uuid, sizeof(cli->user->uuid));
     memcpy(re->content, re_msg, strlen(re_msg) + 1);
-    re->timestamp = clock() / CLOCKS_PER_SEC;
+    re->timestamp = time(NULL);
     server_event_reply_created(cli->context.thread->uuid, re->uuid_sender,
     re->content);
     append_node(&cli->context.thread->replies, re);

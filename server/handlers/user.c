@@ -27,12 +27,12 @@ void users_handler(server_t *server, client_t *client, UNUSED char **args)
 {
     void *packet = create_packet(EV_LIST_USERS, NULL, NULL, 0);
     int connected = 0;
+    user_t *user;
 
     for (int i = 0; i < server->users_by_uuid->size; i++) {
-        append_arg_to_packet(&packet,
-            server->users_by_uuid->elems[i].key, R_UUID_LENGTH);
-        append_arg_to_packet(&packet, server->users_by_uuid->elems[i].value,
-            strlen(server->users_by_uuid->elems[i].value));
+        user = server->users_by_uuid->elems[i].value;
+        append_arg_to_packet(&packet, user->uuid, R_UUID_LENGTH);
+        append_arg_to_packet(&packet, user->name, strlen(user->name) + 1);
         connected = (map_get(server->clients_by_uuid,
             server->users_by_uuid->elems[i].key) ? 1 : 0);
         append_arg_to_packet(&packet, &connected, sizeof(int));
