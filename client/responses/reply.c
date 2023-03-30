@@ -7,6 +7,11 @@
 
 #include "client.h"
 
+void client_receiver_list_replies(client_t *client)
+{
+
+}
+
 void client_receiver_help(client_t *client)
 {
     char *body = NULL;
