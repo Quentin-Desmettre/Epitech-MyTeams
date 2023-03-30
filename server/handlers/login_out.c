@@ -21,8 +21,10 @@ void login_handler(server_t *server, client_t *client, char **args)
         server_event_user_created(user->uuid, user->name);
         map_add(server->users_by_name, user->name, user);
         map_add(server->users_by_uuid, user->uuid, user);
+    } if (!map_get(server->clients_by_uuid, user->uuid)) {
+        map_add(server->clients_by_uuid, user->uuid, client);
+        client->is_in_uuid_map = true;
     }
-    map_add(server->clients_by_uuid, user->uuid, client);
     server_event_user_logged_in(user->uuid);
     client->logged_in = true;client->user = user;
     packet = create_packet(EV_LOGGED_IN, NULL, NULL, 0);
@@ -42,5 +44,6 @@ void logout_handler(server_t *server, client_t *client, UNUSED char **args)
     send_packet(packet, client->fd, true);
     client->logged_in = false;
     client->user = NULL;
-    map_remove(server->clients_by_uuid, user->uuid);
+    if (client->is_in_uuid_map)
+        map_remove(server->clients_by_uuid, user->uuid);
 }
