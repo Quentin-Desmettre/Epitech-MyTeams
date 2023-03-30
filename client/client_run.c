@@ -69,7 +69,7 @@ int client_read(client_t *client)
     if (bytes < 0)
         return 0;
     if (bytes == 0)
-        return 0;
+        return -1;
     tmp_buf = calloc(1, bytes);
     if (read(client->socketFd, tmp_buf, bytes) != bytes)
         return free(tmp_buf), 0;
@@ -93,10 +93,8 @@ void client_run(client_t *client)
         FD_SET(0, &readfds);
         if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
             break;
-        if (FD_ISSET(client->socketFd, &readfds)) {
-            client_read(client);
-            continue;
-        }
+        if (FD_ISSET(client->socketFd, &readfds) && client_read(client))
+            break;
         if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
             break;
     }

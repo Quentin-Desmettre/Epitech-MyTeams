@@ -36,6 +36,7 @@
     #define MAX_BODY_LENGTH 512
     #define UUID_LENGTH 36
     #define R_UUID_LENGTH 37
+    #define UUID_PAIR_LEN (UUID_LENGTH * 2 + 1)
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct team {
@@ -206,7 +207,7 @@ char **strarr(char *str, char *delim);
 
 // Packet
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
-void *create_packet(enum responses code, const void **args,
+void *create_packet(int code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);
