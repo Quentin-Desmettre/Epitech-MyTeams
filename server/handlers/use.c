@@ -19,6 +19,8 @@ void use_handler(server_t *server, client_t *client, char **args)
         return send_error(client, UNKNOWN_CHANNEL, args[1]);
     if (!th && strlen(args[2]) > 0)
         return send_error(client, UNKNOWN_THREAD, args[2]);
+    if (t && !is_user_subscribed(client, t))
+        return send_error(client, UNAUTHORIZED, t->name);
     client->context.team = t;
     client->context.channel = c;
     client->context.thread = th;

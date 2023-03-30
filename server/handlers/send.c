@@ -61,5 +61,6 @@ void send_handler(server_t *server, client_t *client, char **args)
     packet = create_packet(EV_MESSAGE_RECEIVED, NULL, NULL, 0);
     append_arg_to_packet(&packet,
     client->user->uuid, sizeof(client->user->uuid));
+    append_arg_to_packet(&packet, args[1], strlen(args[1]) + 1);
     send_packet(packet, dest_cli->fd, true);
 }
