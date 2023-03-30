@@ -22,6 +22,7 @@ typedef struct user {
 typedef struct client {
     int fd;
     bool logged_in;
+    bool is_in_uuid_map;
 
     user_context_t context;
     user_t *user;

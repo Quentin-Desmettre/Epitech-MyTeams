@@ -21,7 +21,7 @@ int main(int ac, char **av)
     if (ac == 2 && !strcmp(av[1], "-help"))
         return help();
     if (ac != 3) {
-        fprintf(stderr, "Invalid number of arguments.\n");
+        printf("Invalid number of arguments.\n");
         return 84;
     }
     client_t *client = client_init(av[1], av[2]);
