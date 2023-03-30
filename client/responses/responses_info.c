@@ -46,6 +46,6 @@ void client_receiver_thread_info(client_t *client)
     char *body;
 
     read_packet(client->buffer, "sstss", &thread_uuid,
-    &uuid_sender, &timestamp, &title, &body);
+        &uuid_sender, &timestamp, &title, &body);
     client_print_thread(thread_uuid, uuid_sender, timestamp, title, body);
 }
