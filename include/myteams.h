@@ -36,6 +36,7 @@
     #define MAX_BODY_LENGTH 512
     #define UUID_LENGTH 36
     #define R_UUID_LENGTH 37
+    #define UUID_PAIR_LEN (UUID_LENGTH * 2 + 1)
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct team {
