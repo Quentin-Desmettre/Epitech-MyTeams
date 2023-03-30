@@ -71,7 +71,7 @@ static const command_t COMMANDS[] = {
         {"/send", 3, 3, &client_send},
         {"/messages", 2, 2, &client_messages},
         {"/subscribe", 2, 2, &client_subscribe},
-        {"/subscribed", 1, 1, &client_subscribed},
+        {"/subscribed", 1, 2, &client_subscribed},
         {"/unsubscribe", 2, 2, &client_unsubscribe},
         {"/use", 1, 4, &client_use},
         {"/create", 2, 3, &client_create},
