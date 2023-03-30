@@ -23,6 +23,8 @@ void subscribe_handler(server_t *server, client_t *client, char **args)
 
     if (!t)
         return send_error(client, UNKNOWN_TEAM, args[0]);
+    if (is_user_subscribed(client, t))
+        return;
     append_node(&t->users, client->user->uuid);
     server_event_user_subscribed(args[0], client->user->uuid);
     send_subscribe_data(client->user->uuid, args[0],

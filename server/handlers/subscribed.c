@@ -52,6 +52,8 @@ static void list_subscribed_users(server_t *server, client_t *client,
 
     if (!t)
         return send_error(client, UNKNOWN_TEAM, args[0]);
+    if (!is_user_subscribed(client, t))
+        return send_error(client, UNAUTHORIZED, "");
     packet = create_packet(EV_LIST_USERS, NULL, NULL, 0);
     if (!users)
         return send_packet(packet, client->fd, true);
