@@ -45,7 +45,8 @@ void client_receiver_channel_created_g(client_t *client)
     if (read_packet(client->buffer, "sss", &channel_uuid, &channel_name,
                 &channel_description))
         return;
-    client_event_channel_created(channel_uuid, channel_name, channel_description);
+    client_event_channel_created(channel_uuid,
+    channel_name, channel_description);
 }
 
 void client_receiver_channel_created_u(client_t *client)
@@ -57,5 +58,6 @@ void client_receiver_channel_created_u(client_t *client)
     if (read_packet(client->buffer, "sss", &channel_uuid, &channel_name,
                 &channel_description))
         return;
-    client_print_channel_created(channel_uuid, channel_name, channel_description);
+    client_print_channel_created(channel_uuid,
+        channel_name, channel_description);
 }
