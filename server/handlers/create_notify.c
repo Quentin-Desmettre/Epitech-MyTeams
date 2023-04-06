@@ -69,18 +69,18 @@ void notify_thread_message_creation(thread_message_t *m,
 {
     void *p = create_packet(U_REPLY_CREATED, NULL, NULL, 0);
 
-    append_arg_to_packet(p, c->context.thread->uuid,
+    append_arg_to_packet(&p, c->context.thread->uuid,
     sizeof(c->context.thread->uuid));
-    append_arg_to_packet(p, c->user->uuid, sizeof(c->user->uuid));
-    append_arg_to_packet(p, &m->timestamp, sizeof(time_t));
-    append_arg_to_packet(p, m->content, strlen(m->content) + 1);
-    send_packet(p, c->fd, true);
+    append_arg_to_packet(&p, c->user->uuid, sizeof(c->user->uuid));
+    append_arg_to_packet(&p, &m->timestamp, sizeof(time_t));
+    append_arg_to_packet(&p, m->content, strlen(m->content) + 1);
+    send_packet(&p, c->fd, true);
     p = create_packet(G_REPLY_CREATED, NULL, NULL, 0);
-    append_arg_to_packet(p, c->context.team->uuid,
+    append_arg_to_packet(&p, c->context.team->uuid,
     sizeof(c->context.team->uuid));
-    append_arg_to_packet(p, c->context.thread->uuid,
+    append_arg_to_packet(&p, c->context.thread->uuid,
     sizeof(c->context.thread->uuid));
-    append_arg_to_packet(p, c->user->uuid, sizeof(c->user->uuid));
-    append_arg_to_packet(p, m->content, strlen(m->content) + 1);
+    append_arg_to_packet(&p, c->user->uuid, sizeof(c->user->uuid));
+    append_arg_to_packet(&p, m->content, strlen(m->content) + 1);
     notify_team(p, c->context.team, s);
 }
