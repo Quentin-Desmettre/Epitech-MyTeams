@@ -26,7 +26,7 @@ void login_handler(server_t *server, client_t *client, char **args)
     if (client->user)
         logout_handler(server, client, NULL);
     if (strlen(args[0]) > MAX_NAME_LENGTH)
-        return send_error(client, UNAUTHORIZED, NULL);
+        return send_error(client, UNAUTHORIZED, "");
     user = (user ? user : generate_user(server, args));
     if (!map_get(server->clients_by_uuid, user->uuid)) {
         map_add(server->clients_by_uuid, user->uuid, client);
