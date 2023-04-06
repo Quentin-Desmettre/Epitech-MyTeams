@@ -64,6 +64,8 @@ client_t *client, UNUSED char **args)
 
     if (context->team == NULL)
         return info_user(client);
+    if (!is_user_subscribed(client, client->context.team))
+        return send_error(client, UNAUTHORIZED, "");
     if (context->channel == NULL)
         return info_team(client);
     if (context->thread == NULL)

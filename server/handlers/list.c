@@ -84,6 +84,8 @@ void list_handler(server_t *server, client_t *client, UNUSED char **args)
 
     if (!context->team)
         return list_teams(server, client);
+    if (!is_user_subscribed(client, client->context.team))
+        return send_error(client, UNAUTHORIZED, "");
     if (!context->channel)
         return list_channels(client);
     if (!context->thread)

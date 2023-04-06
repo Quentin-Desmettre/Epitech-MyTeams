@@ -83,6 +83,8 @@ void create_handler(server_t *server, client_t *client, char **args)
 {
     if (client->context.team == NULL)
         return create_team(server, client, args[0], args[1]);
+    if (!is_user_subscribed(client, client->context.team))
+        return send_error(client, UNAUTHORIZED, "");
     if (client->context.channel == NULL)
         return create_channel(server, client, args[0], args[1]);
     if (client->context.thread == NULL)
