@@ -7,11 +7,16 @@
 
 #include "server.h"
 
+bool is_connected(server_t *server, char *uuid)
+{
+    return (map_get(server->clients_by_uuid, uuid) ? true : false);
+}
+
 void user_handler(server_t *server, client_t *client, char **args)
 {
     user_t *user = map_get(server->users_by_uuid, args[0]);
     int connected =
-            (user && map_get(server->clients_by_uuid, args[0])) ? 1 : 0;
+            (user && is_connected(server, args[0])) ? 1 : 0;
     void *packet;
 
     if (!user)
@@ -33,8 +38,7 @@ void users_handler(server_t *server, client_t *client, UNUSED char **args)
         user = server->users_by_uuid->elems[i].value;
         append_arg_to_packet(&packet, user->uuid, R_UUID_LENGTH);
         append_arg_to_packet(&packet, user->name, strlen(user->name) + 1);
-        connected = (map_get(server->clients_by_uuid,
-            server->users_by_uuid->elems[i].key) ? 1 : 0);
+        connected = is_connected(server, server->users_by_uuid->elems[i].key);
         append_arg_to_packet(&packet, &connected, sizeof(int));
     }
     send_packet(packet, client->fd, true);
