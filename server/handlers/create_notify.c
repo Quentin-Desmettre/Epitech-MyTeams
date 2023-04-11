@@ -15,8 +15,8 @@ void notify_team_creation(team_t *t, server_t *server, client_t *client)
     append_arg_to_packet(&packet, t->name, strlen(t->name) + 1);
     append_arg_to_packet(&packet, t->description, strlen(t->description) + 1);
     for (int i = 0; i < server->clients_by_uuid->size; i++)
-        send_packet(packet, ((client_t *)(server->clients_by_uuid->elems[i]
-        .value))->fd, false);
+        send_to_client_list(packet,
+        server->clients_by_uuid->elems[i].value, false);
     ((uint8_t *)packet)[8] = U_TEAM_CREATED;
     send_packet(packet, client->fd, true);
 }
@@ -24,14 +24,13 @@ void notify_team_creation(team_t *t, server_t *server, client_t *client)
 static void notify_team(void *packet, team_t *team, server_t *server)
 {
     list_t *users = team->users;
-    client_t *c;
+    list_t *c;
 
     if (!users)
         return;
     do {
         c = map_get(server->clients_by_uuid, users->data);
-        if (c)
-            send_packet(packet, c->fd, false);
+        send_to_client_list(packet, c, false);
         users = users->next;
     } while (users != team->users);
 }

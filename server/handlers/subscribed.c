@@ -37,7 +37,7 @@ void add_user_info(void **packet, char *uuid, server_t *server)
 
     if (!user)
         return;
-    status = map_get(server->clients_by_uuid, uuid) ? 1 : 0;
+    status = is_connected(server, uuid);
     append_arg_to_packet(packet, uuid, R_UUID_LENGTH);
     append_arg_to_packet(packet, user->name, strlen(user->name) + 1);
     append_arg_to_packet(packet, &status, sizeof(int));

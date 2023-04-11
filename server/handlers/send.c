@@ -47,7 +47,7 @@ static void append_message(server_t *server,
 void send_handler(server_t *server, client_t *client, char **args)
 {
     char *uuid_pair;
-    client_t *dest_cli;
+    list_t *dest_cli;
     void *packet;
 
     if (!map_get(server->users_by_uuid, args[0]))
@@ -62,5 +62,5 @@ void send_handler(server_t *server, client_t *client, char **args)
     append_arg_to_packet(&packet,
     client->user->uuid, sizeof(client->user->uuid));
     append_arg_to_packet(&packet, args[1], strlen(args[1]) + 1);
-    send_packet(packet, dest_cli->fd, true);
+    send_to_client_list(packet, dest_cli, true);
 }
