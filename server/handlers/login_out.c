@@ -94,5 +94,4 @@ void logout_handler(server_t *server, client_t *client, UNUSED char **args)
     client->logged_in = false;
     client->user = NULL;
     remove_client_from_list(server->clients_by_uuid, user->uuid, client->fd);
-    disconnect_client(server, client->fd);
 }
