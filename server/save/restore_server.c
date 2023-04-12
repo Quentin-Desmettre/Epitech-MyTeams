@@ -47,7 +47,7 @@ static void restore_channel(team_t *team, int file)
     printf("Channel restored: %s (%s)\n", channel->name, channel->uuid);
 }
 
-static void restore_team(server_t *server, int file)
+void restore_team(server_t *server, int file)
 {
     team_t *team = calloc(1, sizeof(team_t));
     int nb_channels = 0;
@@ -71,7 +71,7 @@ static void restore_team(server_t *server, int file)
     printf("Team restored: %s (%s)\n", team->name, team->uuid);
 }
 
-static void restore_message_list(server_t *server, int file)
+void restore_message_list(server_t *server, int file)
 {
     char *uuid_pair = calloc(UUID_PAIR_LEN, 1);
     int nb_messages;
@@ -95,9 +95,13 @@ void restore_server(server_t *server)
     int file = open("server.db", O_RDONLY);
     int nb = 0;
     user_t *user;
+    uint64_t magic_number;
 
     if (file < 0)
         return;
+    read(file, &magic_number, sizeof(uint64_t));
+    if (magic_number != MAGIC_NUMBER)
+        return (void)close(file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
         user = calloc(sizeof(user_t), 1);
@@ -106,10 +110,5 @@ void restore_server(server_t *server)
         map_add(server->users_by_uuid, user->uuid, user);
         map_add(server->users_by_name, user->name, user);
     }
-    read(file, &nb, sizeof(int));
-    for (int i = 0; i < nb; i++)
-        restore_team(server, file);
-    read(file, &nb, sizeof(int));
-    for (int i = 0; i < nb; i++)
-        restore_message_list(server, file);
+    restore_messages_and_teams(file, server);
 }

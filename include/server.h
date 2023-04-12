@@ -13,6 +13,9 @@
         #include "logging_server.h"
     #endif
 
+// Constants
+UNUSED static const uint64_t MAGIC_NUMBER = 0x4d797465616d7300;
+
 // Client
 typedef struct user {
     char uuid[R_UUID_LENGTH];
@@ -22,7 +25,6 @@ typedef struct user {
 typedef struct client {
     int fd;
     bool logged_in;
-    bool is_in_uuid_map;
 
     user_context_t context;
     user_t *user;
@@ -100,6 +102,19 @@ int run_server(server_t *server);
 void save_server(server_t *server);
 void restore_server(server_t *server);
 void accept_client(server_t *server);
+void restore_team(server_t *server, int file);
+void restore_message_list(server_t *server, int file);
+UNUSED static void restore_messages_and_teams(int file, server_t *server)
+{
+    int nb;
+
+    read(file, &nb, sizeof(int));
+    for (int i = 0; i < nb; i++)
+        restore_team(server, file);
+    read(file, &nb, sizeof(int));
+    for (int i = 0; i < nb; i++)
+        restore_message_list(server, file);
+}
 
 // Client
 void handle_client_input(server_t *server, int fd);

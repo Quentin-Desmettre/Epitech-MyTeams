@@ -39,8 +39,6 @@ void login_handler(server_t *server, client_t *client, char **args)
 
     if (client->user)
         logout_handler(server, client, NULL);
-    if (strlen(args[0]) > MAX_NAME_LENGTH)
-        return send_error(client, UNAUTHORIZED, "");
     user = (user ? user : generate_user(server, args));
     append_to_list_in_map(server->clients_by_uuid, user->uuid, client);
     server_event_user_logged_in(user->uuid);

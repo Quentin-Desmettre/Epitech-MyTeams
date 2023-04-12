@@ -75,6 +75,7 @@ void save_server(server_t *server)
 
     if (file < 0)
         return;
+    write(file, &MAGIC_NUMBER, sizeof(MAGIC_NUMBER));
     write(file, &server->users_by_name->size, sizeof(int));
     for (int i = 0; i < server->users_by_name->size; i++)
         write(file, server->users_by_name->elems[i].value, sizeof(user_t));

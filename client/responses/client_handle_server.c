@@ -28,13 +28,13 @@ static void handle_server_return(client_t *client)
 
     while (currPacket <= client->buf_size) {
         handle_action(client);
-        memmove(client->buffer, client->buffer + currPacket, client->buf_size - currPacket);
+        memmove(client->buffer,
+        client->buffer + currPacket, client->buf_size - currPacket);
         tmp = *(size_t *)(client->buffer + currPacket);
         if (tmp == 0)
             break;
         currPacket += tmp;
     }
-
     free(client->buffer);
     client->buffer = NULL;
     client->buf_size = 0;
