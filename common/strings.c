@@ -31,6 +31,8 @@ void append_str_array(char ***array, char *what)
 
 void free_str_array(char **array)
 {
+    if (!array)
+        return;
     for (int i = 0; array[i]; i++)
         free(array[i]);
     free(array);

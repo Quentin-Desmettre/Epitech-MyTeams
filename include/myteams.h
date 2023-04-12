@@ -118,6 +118,23 @@ static const int NB_ARGS_FOR_REQUEST[] = {
     0  // Info
 };
 
+static const long MAX_ARG_SIZES_FOR_REQUEST[NB_COMMANDS][3] = {
+        {-1, -1, -1}, // Help
+        {MAX_NAME_LENGTH, -1, -1}, // Login
+        {-1, -1, -1}, // Logout
+        {-1, -1, -1}, // Users
+        {UUID_LENGTH, -1, -1}, // User
+        {UUID_LENGTH, MAX_BODY_LENGTH, -1}, // Send
+        {UUID_LENGTH, -1, -1}, // Messages
+        {UUID_LENGTH, -1, -1}, // Subscribe
+        {UUID_LENGTH, -1, -1}, // Subscribed
+        {UUID_LENGTH, -1, -1}, // Unsubscribe
+        {UUID_LENGTH, UUID_LENGTH, UUID_LENGTH}, // Use
+        {-1, -1, -1}, // Create, to handle in create functions
+        {-1, -1, -1}, // List
+        {-1, -1, -1}  // Info
+};
+
 enum responses {
     EV_HELP = 0,
     EV_LOGGED_IN,

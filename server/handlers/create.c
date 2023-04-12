@@ -12,6 +12,9 @@ void create_team(server_t *server, client_t *client,
 {
     team_t *t;
 
+    if (strlen(team_name) > MAX_NAME_LENGTH ||
+    strlen(team_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(client, UNKNOWN_COMMAND, "");
     if (team_exists(team_name, server))
         return send_error(client, ALREADY_EXIST, "");
     t = calloc(sizeof(team_t), 1);
@@ -29,6 +32,9 @@ void create_channel(server_t *server, client_t *cli,
 {
     channel_t *ch;
 
+    if (strlen(ch_name) > MAX_NAME_LENGTH ||
+    strlen(ch_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     if (channel_exists(ch_name, cli->context.team))
@@ -48,6 +54,9 @@ void create_thread(server_t *server, client_t *cli,
 {
     thread_t *th;
 
+    if (strlen(th_name) > MAX_NAME_LENGTH ||
+    strlen(th_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     if (thread_exists(th_name, cli->context.channel))
@@ -67,6 +76,8 @@ void create_reply(server_t *server, client_t *cli, const char *re_msg)
 {
     thread_message_t *re;
 
+    if (strlen(re_msg) > MAX_BODY_LENGTH)
+        return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, cli->context.team))
         return send_error(cli, UNAUTHORIZED, cli->context.team->name);
     re = calloc(sizeof(thread_message_t), 1);
