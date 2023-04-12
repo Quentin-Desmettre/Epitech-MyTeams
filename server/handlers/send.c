@@ -13,7 +13,7 @@ char *get_uuid_pair(const char *uuid_1, const char *uuid_2)
     const char *first = uuid_1;
     const char *second = uuid_2;
 
-    if (strcmp((char *)uuid_1, (char *)uuid_2) > 0) {
+    if (strcmp(uuid_1, uuid_2) > 0) {
         first = uuid_2;
         second = uuid_1;
     }
@@ -25,6 +25,7 @@ char *get_uuid_pair(const char *uuid_1, const char *uuid_2)
 static user_message_t *create_message(client_t *client, char **args)
 {
     user_message_t *message = calloc(sizeof(user_message_t), 1);
+
     memcpy(message->uuid_sender,
         client->user->uuid, sizeof(client->user->uuid));
     memcpy(message->uuid_receiver, args[0], strlen(args[0]));
@@ -37,6 +38,7 @@ static void append_message(server_t *server,
                             char *uuid_pair, user_message_t *message)
 {
     list_t *message_list = map_get(server->messages, uuid_pair);
+
     append_node(&message_list, message);
     if (message_list->next == message_list)
         map_add(server->messages, uuid_pair, message_list);
