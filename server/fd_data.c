@@ -11,9 +11,11 @@ void disconnect_client(server_t *server, int fd)
 {
     client_t *client = map_get(server->clients_by_fd, MCAST fd);
 
+    if (client->logged_in)
+        logout_handler(server, client, NULL);
     remove_fd_from_array(&server->client_fds, &server->nb_client, fd);
-    map_remove(server->clients_by_uuid, MCAST client->user->uuid);
     map_remove(server->clients_by_fd, MCAST fd);
+    shutdown(fd, SHUT_RDWR);
 }
 
 void clear_client_buffer(client_t *client)

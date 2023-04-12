@@ -10,11 +10,11 @@
 map_t *map_create(int (*compare)(const void *, const void *),
 void (*free_value)(void *))
 {
-    map_t *map = malloc(sizeof(map_t));
+    map_t *map = calloc(1, sizeof(map_t));
 
     map->capacity = 10;
     map->size = 0;
-    map->elems = malloc(sizeof(map_elem_t) * map->capacity);
+    map->elems = calloc(1, sizeof(map_elem_t) * map->capacity);
     map->compare = compare;
     map->free_value = free_value;
     return (map);

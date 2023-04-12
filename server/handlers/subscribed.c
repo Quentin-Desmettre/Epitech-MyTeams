@@ -37,7 +37,7 @@ void add_user_info(void **packet, char *uuid, server_t *server)
 
     if (!user)
         return;
-    status = map_get(server->clients_by_uuid, uuid) ? 1 : 0;
+    status = is_connected(server, uuid);
     append_arg_to_packet(packet, uuid, R_UUID_LENGTH);
     append_arg_to_packet(packet, user->name, strlen(user->name) + 1);
     append_arg_to_packet(packet, &status, sizeof(int));
@@ -52,6 +52,8 @@ static void list_subscribed_users(server_t *server, client_t *client,
 
     if (!t)
         return send_error(client, UNKNOWN_TEAM, args[0]);
+    if (!is_user_subscribed(client, t))
+        return send_error(client, UNAUTHORIZED, "");
     packet = create_packet(EV_LIST_USERS, NULL, NULL, 0);
     if (!users)
         return send_packet(packet, client->fd, true);

@@ -27,6 +27,7 @@
     #include <fcntl.h>
     #include "linked_list.h"
     #include "map.h"
+    #include <stdio.h>
     #include <uuid/uuid.h>
     #define UNUSED __attribute__((unused))
     #define MAX_CLIENTS 100
@@ -35,6 +36,7 @@
     #define MAX_BODY_LENGTH 512
     #define UUID_LENGTH 36
     #define R_UUID_LENGTH 37
+    #define UUID_PAIR_LEN (UUID_LENGTH * 2 + 1)
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct team {
@@ -116,6 +118,23 @@ static const int NB_ARGS_FOR_REQUEST[] = {
     0  // Info
 };
 
+static const long MAX_ARG_SIZES_FOR_REQUEST[NB_COMMANDS][3] = {
+        {-1, -1, -1}, // Help
+        {MAX_NAME_LENGTH, -1, -1}, // Login
+        {-1, -1, -1}, // Logout
+        {-1, -1, -1}, // Users
+        {UUID_LENGTH, -1, -1}, // User
+        {UUID_LENGTH, MAX_BODY_LENGTH, -1}, // Send
+        {UUID_LENGTH, -1, -1}, // Messages
+        {UUID_LENGTH, -1, -1}, // Subscribe
+        {UUID_LENGTH, -1, -1}, // Subscribed
+        {UUID_LENGTH, -1, -1}, // Unsubscribe
+        {UUID_LENGTH, UUID_LENGTH, UUID_LENGTH}, // Use
+        {-1, -1, -1}, // Create, to handle in create functions
+        {-1, -1, -1}, // List
+        {-1, -1, -1}  // Info
+};
+
 enum responses {
     EV_HELP = 0,
     EV_LOGGED_IN,
@@ -148,6 +167,7 @@ enum responses {
     EV_THREAD_INFO,
     USER_SUBSCRIBED,
     USER_UNSUBSCRIBED,
+    NB_RESPONSES
 };
 
 static const int NB_ARGS_FOR_RESPONSE[] = {
@@ -202,11 +222,31 @@ void *memdup(void *src, size_t size);
 void generate_uuid(char uuid[R_UUID_LENGTH]);
 
 // Packet
-bool is_error(enum responses code);
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
-void *create_packet(enum responses code, const void **args,
+void *create_packet(int code, const void **args,
         const int args_lens[], int nb_args);
 void send_packet(void *packet, int fd, bool to_free);
 void safe_write(int fd, void *data, size_t len);
+
+/**
+ * @brief Read a packet and fill the given arguments
+ * @param packet The packet
+ * @param params The parameters to read, 's' for string and 't' for time_t.
+ * Example: "sst" for 2 strings and 1 time_t, in this order.
+ * @param ... The arguments to fill, should be pointers to string (char **) and
+ * pointer to time_t (time_t *).
+ * @return true if the packet was read successfully, false otherwise.
+ */
+bool read_packet(void *packet, const char *params, ...);
+
+/**
+ * @brief Split a packet into a list of packet, containing the arguments.
+ * @param packet The orginal packet
+ * @param packet_content The content of each sub-packet packet, as a string.
+ * If a sub packet contains two strings and a time_t, the string should be
+ * "sst".
+ * @return list_t* if it worked, else NULL in case of error
+ */
+list_t *read_packet_list(void *packet, char const *packet_content);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

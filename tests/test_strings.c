@@ -33,7 +33,7 @@ Test(memdup, memdup, .init = setup)
 
 Test(free_str_array, free_str_array, .init = setup)
 {
-    char **array = malloc(sizeof(char *) * 3);
+    char **array = calloc(1, sizeof(char *) * 3);
 
     array[0] = strdup("test");
     array[1] = strdup("test2");

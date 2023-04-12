@@ -32,15 +32,15 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
 
     for (int i = 0; i < nb_args; i++) {
         arg_len = *(uint16_t *)(request + 11 + offset);
-        if (arg_len > buf_size - 13 - offset) {
+        if ((size_t)(arg_len + 11 + offset) > buf_size) {
             free(args);
             return NULL;
         }
-        arg = malloc(arg_len + 1);
+        arg = calloc(1, arg_len + 1);
         memcpy(arg, request + 13 + offset, arg_len);
         arg[arg_len] = 0;
         append_str_array(&args, arg);
-        offset += arg_len;
+        offset += 2 + arg_len;
     }
     return args;
 }
@@ -71,7 +71,7 @@ void handle_client_input(server_t *server, int fd)
     if (bytes == 0)
         return disconnect_client(server, fd);
     client = map_get(server->clients_by_fd, MCAST fd);
-    tmp_buf = malloc(bytes);
+    tmp_buf = calloc(1, bytes);
     if (read(fd, tmp_buf, bytes) != bytes)
         return free(tmp_buf);
     client->buffer = realloc(client->buffer, client->buf_size + bytes);

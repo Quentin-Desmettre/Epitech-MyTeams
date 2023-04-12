@@ -7,6 +7,25 @@
 
 #include "client.h"
 
+char *clean_command(char *command)
+{
+    char *new_command = calloc(1, sizeof(char) * (strlen(command) + 1));
+    int nb_char = 0;
+
+    for (int i = 0; command[i]; i++) {
+        if (command[i] == ' ' || command[i] == '\t' || command[i] == '\n' ||
+            command[i] == '\r' || command[i] == '\v' || command[i] == '\f' ||
+            command[i] == '"')
+            continue;
+        new_command[nb_char] = command[i];
+        nb_char++;
+    }
+    new_command = realloc(new_command, sizeof(char) * (nb_char + 1));
+    new_command[nb_char] = '\0';
+    free(command);
+    return new_command;
+}
+
 bool connect_client(client_t *client, char *server_ip, int port)
 {
     int sockfd;
@@ -31,7 +50,7 @@ bool connect_client(client_t *client, char *server_ip, int port)
     return true;
 }
 
-int get_port(char *port_str)
+int client_get_port(char *port_str)
 {
     char *endptr = NULL;
     int port;
@@ -48,7 +67,7 @@ int get_port(char *port_str)
 client_t *client_init(char *server_ip, char *server_port)
 {
     client_t *client = calloc(sizeof(client_t), 1);
-    int port = get_port(server_port);
+    int port = client_get_port(server_port);
 
     if (port < 0 || !connect_client(client, server_ip, port))
         return NULL;

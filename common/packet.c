@@ -7,14 +7,6 @@
 
 #include "myteams.h"
 
-bool is_error(enum responses code)
-{
-    return code == UNKNOWN_TEAM || code == UNKNOWN_CHANNEL ||
-        code == UNKNOWN_THREAD || code == UNKNOWN_USER ||
-        code == UNAUTHORIZED || code == UNKNOWN_COMMAND
-        || code == ALREADY_EXIST;
-}
-
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
 {
     uint64_t packet_size = ((uint64_t *)(*packet))[0];
@@ -26,7 +18,7 @@ void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len)
     ((uint64_t *)(*packet))[0] += 2 + arg_len;
 }
 
-void *create_packet(enum responses code, const void **args,
+void *create_packet(int code, const void **args,
         const int args_lens[], int nb_args)
 {
     void *packet = calloc(11, 1);

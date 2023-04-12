@@ -14,6 +14,9 @@
     #endif
     #define DB_FILE "server.db"
 
+// Constants
+UNUSED static const uint64_t MAGIC_NUMBER = 0x4d797465616d7300;
+
 // Client
 typedef struct user {
     char uuid[R_UUID_LENGTH];
@@ -46,7 +49,7 @@ typedef struct server {
     map_t *teams;      // <== Maps uuid_team -> team_t
 
     map_t *clients_by_fd;        // <== Maps fd -> client_t
-    map_t *clients_by_uuid;      // <== Maps uuid -> client_t
+    map_t *clients_by_uuid;      // <== Maps uuid -> liste de client_t
     map_t *users_by_uuid;        // <== Maps uuid_user -> user_t
     map_t *users_by_name;        // <== Maps name_user -> user_t
     map_t *messages;   // <== Maps "uuid_user1-uuid_user2" -> list of messages
@@ -142,14 +145,13 @@ bool thread_exists(const char *name, channel_t *channel);
 bool channel_exists(const char *name, team_t *team);
 bool team_exists(const char *name, server_t *server);
 bool is_user_subscribed(client_t *client, team_t *team);
-<<<<<<< Updated upstream
-=======
 bool is_connected(server_t *server, char *uuid);
 void send_to_client_list(void *packet, list_t *clients, bool free_packet);
 int handle_context(server_t *server, client_t *client);
 const command_handler_t *get_command_handler(client_t *cli);
 bool check_args(char **args, const command_handler_t *handler, client_t *cli);
->>>>>>> Stashed changes
+bool is_connected(server_t *server, char *uuid);
+void send_to_client_list(void *packet, list_t *clients, bool free_packet);
 
 // Create notifications
 void notify_team_creation(team_t *t, server_t *server, client_t *client);

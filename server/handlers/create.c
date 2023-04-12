@@ -12,6 +12,9 @@ void create_team(server_t *server, client_t *client,
 {
     team_t *t;
 
+    if (strlen(team_name) > MAX_NAME_LENGTH ||
+    strlen(team_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(client, UNKNOWN_COMMAND, "");
     if (team_exists(team_name, server))
         return send_error(client, ALREADY_EXIST, "");
     t = calloc(sizeof(team_t), 1);
@@ -30,18 +33,15 @@ void create_channel(server_t *server, client_t *cli,
     team_t *team = map_get(server->teams, cli->context.team);
     channel_t *ch;
 
-<<<<<<< Updated upstream
-    if (!is_user_subscribed(cli, cli->context.team))
-        return send_error(cli, UNAUTHORIZED, cli->context.team->name);
-    if (channel_exists(ch_name, cli->context.team))
-=======
+    if (strlen(ch_name) > MAX_NAME_LENGTH ||
+    strlen(ch_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(cli, UNKNOWN_COMMAND, "");
     if (strlen(ch_name) > MAX_NAME_LENGTH ||
     strlen(ch_desc) > MAX_DESCRIPTION_LENGTH)
         return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, team))
         return send_error(cli, UNAUTHORIZED, "");
     if (channel_exists(ch_name, team))
->>>>>>> Stashed changes
         return send_error(cli, ALREADY_EXIST, "");
     ch = calloc(sizeof(channel_t), 1);
     generate_uuid(ch->uuid);
@@ -60,21 +60,18 @@ void create_thread(server_t *server, client_t *cli,
     channel_t *channel = map_get(team->channels, cli->context.channel);
     thread_t *th;
 
-<<<<<<< Updated upstream
-    if (!is_user_subscribed(cli, cli->context.team))
-        return send_error(cli, UNAUTHORIZED, cli->context.team->name);
-    if (thread_exists(th_name, cli->context.channel))
-=======
+    if (strlen(th_name) > MAX_NAME_LENGTH ||
+    strlen(th_desc) > MAX_DESCRIPTION_LENGTH)
+        return send_error(cli, UNKNOWN_COMMAND, "");
     if (strlen(th_name) > MAX_NAME_LENGTH ||
     strlen(th_desc) > MAX_DESCRIPTION_LENGTH)
         return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, team))
         return send_error(cli, UNAUTHORIZED, "");
     if (thread_exists(th_name, channel))
->>>>>>> Stashed changes
         return send_error(cli, ALREADY_EXIST, "");
     th = calloc(sizeof(thread_t), 1);generate_uuid(th->uuid);
-    th->timestamp = clock() / CLOCKS_PER_SEC;
+    th->timestamp = time(NULL);
     memcpy(th->title, th_name, strlen(th_name) + 1);
     memcpy(th->message, th_desc, strlen(th_desc) + 1);
     memcpy(th->uuid_creator, cli->user->uuid, sizeof(cli->user->uuid));

@@ -9,8 +9,8 @@
 
 static void restore_thread(channel_t *channel, int file)
 {
-    thread_t *thread = malloc(sizeof(thread_t));
-    thread_message_t *message;
+    thread_t *thread = calloc(1, sizeof(thread_t));
+    thread_message_t *mess;
     int nb_replies = 0;
     read(file, thread->uuid, sizeof(thread->uuid));
     read(file, thread->uuid_creator, sizeof(thread->uuid_creator));
@@ -20,18 +20,20 @@ static void restore_thread(channel_t *channel, int file)
     read(file, &nb_replies, sizeof(int));
     thread->replies = NULL;
     for (int i = 0; i < nb_replies; i++) {
-        message = malloc(sizeof(thread_message_t));
-        read(file, message->uuid_sender, sizeof(message->uuid_sender));
-        read(file, message->content, sizeof(message->content));
-        read(file, &message->timestamp, sizeof(time_t));
-        append_node(&thread->replies, message);
+        mess = calloc(1, sizeof(thread_message_t));
+        read(file, mess->uuid_sender, sizeof(mess->uuid_sender));
+        read(file, mess->content, sizeof(mess->content));
+        read(file, &mess->timestamp, sizeof(time_t));
+        append_node(&thread->replies, mess);
+        printf("Reply restored: %s (%s)\n", mess->content, mess->uuid_sender);
     }
     map_add(channel->threads, thread->uuid, thread);
+    printf("Thread restored: %s (%s)\n", thread->title, thread->uuid);
 }
 
 static void restore_channel(team_t *team, int file)
 {
-    channel_t *channel = malloc(sizeof(channel_t));
+    channel_t *channel = calloc(1, sizeof(channel_t));
     int nb_threads;
 
     read(file, channel->uuid, sizeof(channel->uuid));
@@ -42,15 +44,15 @@ static void restore_channel(team_t *team, int file)
     for (int i = 0; i < nb_threads; i++)
         restore_thread(channel, file);
     map_add(team->channels, channel->uuid, channel);
+    printf("Channel restored: %s (%s)\n", channel->name, channel->uuid);
 }
 
-static void restore_team(server_t *server, int file)
+void restore_team(server_t *server, int file)
 {
-    team_t *team = malloc(sizeof(team_t));
+    team_t *team = calloc(1, sizeof(team_t));
     int nb_channels = 0;
     int subscribed_users;
     char uuid[sizeof(team->uuid)];
-
     read(file, team->uuid, sizeof(team->uuid));
     read(file, team->name, sizeof(team->name));
     read(file, team->description, sizeof(team->description));
@@ -66,13 +68,15 @@ static void restore_team(server_t *server, int file)
         append_node(&team->users, memdup(uuid, sizeof(uuid)));
     }
     map_add(server->teams, team->uuid, team);
+    printf("Team restored: %s (%s)\n", team->name, team->uuid);
 }
 
-static void restore_message(server_t *server, int file)
+void restore_message_list(server_t *server, int file)
 {
-    user_message_t *message = malloc(sizeof(user_message_t));
-    void *key = malloc(sizeof(message->uuid_sender)
-            + sizeof(message->uuid_receiver));
+    char *uuid_pair = calloc(UUID_PAIR_LEN, 1);
+    int nb_messages;
+    user_message_t *mess;
+    list_t *list = NULL;
 
     read(file, uuid_pair, UUID_PAIR_LEN);
     read(file, &nb_messages, sizeof(int));
@@ -80,6 +84,8 @@ static void restore_message(server_t *server, int file)
         mess = calloc(1, sizeof(user_message_t));
         read(file, mess, sizeof(user_message_t));
         append_node(&list, mess);
+        printf("Message restored: %s (%s -> %s)\n",
+        mess->content, mess->uuid_sender, mess->uuid_receiver);
     }
     map_add(server->messages, uuid_pair, list);
 }
@@ -96,7 +102,7 @@ void restore_server(server_t *server)
         return (void)close(file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
-        user = malloc(sizeof(user_t));
+        user = calloc(sizeof(user_t), 1);
         read(file, user, sizeof(user_t));
         server_event_user_loaded(user->uuid, user->name);
         map_add(server->users_by_uuid, user->uuid, user);

@@ -15,17 +15,17 @@ Test(int_compare, int_compare, .init = setup, .fini = teardown)
     int b = 2;
     int c = 1;
 
-    cr_assert_eq(int_compare(&a, &b), -1);
-    cr_assert_eq(int_compare(&b, &a), 1);
-    cr_assert_eq(int_compare(&a, &c), 0);
+    cr_assert_eq(int_compare((void *)(long)a, (void *)(long)b), -1);
+    cr_assert_eq(int_compare((void *)(long)b, (void *)(long)a), 1);
+    cr_assert_eq(int_compare((void *)(long)a, (void *)(long)c), 0);
 }
 
 Test(generate_uuid, generate_uuid, .init = setup, .fini = teardown)
 {
-    char uuid[17];
+    char uuid[R_UUID_LENGTH];
 
     generate_uuid(uuid);
-    cr_assert_eq(strlen(uuid), 16);
-    cr_assert_eq(memchr(uuid, 0, 16), NULL);
-    cr_assert_eq(uuid[16], 0);
+    cr_assert_eq(strlen(uuid), UUID_LENGTH);
+    cr_assert_eq(memchr(uuid, 0, UUID_LENGTH), NULL);
+    cr_assert_eq(uuid[UUID_LENGTH], 0);
 }

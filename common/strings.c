@@ -31,6 +31,8 @@ void append_str_array(char ***array, char *what)
 
 void free_str_array(char **array)
 {
+    if (!array)
+        return;
     for (int i = 0; array[i]; i++)
         free(array[i]);
     free(array);
@@ -38,7 +40,7 @@ void free_str_array(char **array)
 
 void *memdup(void *src, size_t size)
 {
-    void *dst = malloc(size);
+    void *dst = calloc(1, size);
 
     memcpy(dst, src, size);
     return (dst);
