@@ -156,5 +156,6 @@ static const command_receiver_t RESPONSES[] = {
 };
 
 char *clean_command(char *command);
+int client_read(client_t *client);
 
 #endif //EPITECH_MYTEAMS_CLIENT_H
