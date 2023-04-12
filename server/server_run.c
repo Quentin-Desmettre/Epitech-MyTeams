@@ -61,7 +61,7 @@ void handle_request(server_t *server, client_t *client)
         return send_error(client, UNKNOWN_COMMAND, "");
     if (handler->requires_login && !client->logged_in)
         return send_error(client, UNAUTHORIZED, "");
-    for (int i = 0; i < 3 && args[i]; i++)
+    for (int i = 0; i < 3 && args && args[i]; i++)
         if (MAX_ARG_SIZES_FOR_REQUEST[cmd_id][i] >= 0 &&
         (long int)strlen(args[i]) > MAX_ARG_SIZES_FOR_REQUEST[cmd_id][i])
             return send_error(client, UNKNOWN_COMMAND, "");
