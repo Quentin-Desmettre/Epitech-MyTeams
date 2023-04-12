@@ -14,6 +14,7 @@ static void save_thread(thread_t *thread, int file)
     thread_message_t *message;
 
     write(file, thread->uuid, sizeof(thread->uuid));
+    write(file, thread->uuid_creator, sizeof(thread->uuid_creator));
     write(file, thread->title, sizeof(thread->title));
     write(file, thread->message, sizeof(thread->message));
     write(file, &thread->timestamp, sizeof(time_t));
@@ -57,7 +58,7 @@ static void save_team(team_t *team, int file)
 
 void save_server(server_t *server)
 {
-    int file = open("server.db", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int file = open(DB_FILE, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
     if (file < 0)
         return;
@@ -69,5 +70,8 @@ void save_server(server_t *server)
         write(file, server->users_by_name->elems[i].value, sizeof(user_t));
     write(file, &server->messages->size, sizeof(int));
     for (int i = 0; i < server->messages->size; i++)
-        write(file, server->messages->elems[i].value, sizeof(user_message_t));
+        save_message_list(server->messages->elems[i].key,
+                            server->messages->elems[i].value, file);
+    close(file);
+    write_header(DB_FILE);
 }

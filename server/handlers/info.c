@@ -20,9 +20,9 @@ static void info_user(client_t *client)
     send_packet(packet, client->fd, true);
 }
 
-static void info_team(client_t *client)
+static void info_team(server_t *s, client_t *client)
 {
-    team_t *team = client->context.team;
+    team_t *team = map_get(s->teams, client->context.team);
     void *packet = create_packet(EV_TEAM_INFO, NULL, NULL, 0);
 
     append_arg_to_packet(&packet, team->uuid, sizeof(team->uuid));
@@ -31,9 +31,10 @@ static void info_team(client_t *client)
     send_packet(packet, client->fd, true);
 }
 
-static void info_channel(client_t *client)
+static void info_channel(server_t *s, client_t *client)
 {
-    channel_t *channel = client->context.channel;
+    team_t *team = map_get(s->teams, client->context.team);
+    channel_t *channel = map_get(team->channels, client->context.channel);
     void *packet = create_packet(EV_CHANNEL_INFO, NULL, NULL, 0);
 
     append_arg_to_packet(&packet, channel->uuid, sizeof(channel->uuid));
@@ -43,9 +44,11 @@ static void info_channel(client_t *client)
     send_packet(packet, client->fd, true);
 }
 
-static void info_thread(client_t *client)
+static void info_thread(server_t *s, client_t *client)
 {
-    thread_t *thread = client->context.thread;
+    team_t *team = map_get(s->teams, client->context.team);
+    channel_t *channel = map_get(team->channels, client->context.channel);
+    thread_t *thread = map_get(channel->threads, client->context.thread);
     void *packet = create_packet(EV_THREAD_INFO, NULL, NULL, 0);
 
     append_arg_to_packet(&packet, thread->uuid, sizeof(thread->uuid));
@@ -57,16 +60,20 @@ static void info_thread(client_t *client)
     send_packet(packet, client->fd, true);
 }
 
-void info_handler(UNUSED server_t *server,
-client_t *client, UNUSED char **args)
+void info_handler(server_t *server, client_t *client, UNUSED char **args)
 {
     user_context_t *context = &client->context;
+    team_t *team = context->team ? map_get(server->teams, context->team) : 0;
 
+    if (handle_context(server, client))
+        return;
     if (context->team == NULL)
         return info_user(client);
+    if (!is_user_subscribed(client, team))
+        return send_error(client, UNAUTHORIZED, "");
     if (context->channel == NULL)
-        return info_team(client);
+        return info_team(server, client);
     if (context->thread == NULL)
-        return info_channel(client);
-    return info_thread(client);
+        return info_channel(server, client);
+    return info_thread(server, client);
 }

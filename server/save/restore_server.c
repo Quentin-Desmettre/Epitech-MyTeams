@@ -12,8 +12,8 @@ static void restore_thread(channel_t *channel, int file)
     thread_t *thread = malloc(sizeof(thread_t));
     thread_message_t *message;
     int nb_replies = 0;
-
     read(file, thread->uuid, sizeof(thread->uuid));
+    read(file, thread->uuid_creator, sizeof(thread->uuid_creator));
     read(file, thread->title, sizeof(thread->title));
     read(file, thread->message, sizeof(thread->message));
     read(file, &thread->timestamp, sizeof(time_t));
@@ -74,24 +74,26 @@ static void restore_message(server_t *server, int file)
     void *key = malloc(sizeof(message->uuid_sender)
             + sizeof(message->uuid_receiver));
 
-    read(file, message, sizeof(user_message_t));
-    memcpy(key, message->uuid_sender, sizeof(message->uuid_sender));
-    memcpy(key + sizeof(message->uuid_sender),
-        message->uuid_receiver, sizeof(message->uuid_receiver));
-    map_add(server->messages, key, message);
+    read(file, uuid_pair, UUID_PAIR_LEN);
+    read(file, &nb_messages, sizeof(int));
+    for (int i = 0; i < nb_messages; i++) {
+        mess = calloc(1, sizeof(user_message_t));
+        read(file, mess, sizeof(user_message_t));
+        append_node(&list, mess);
+    }
+    map_add(server->messages, uuid_pair, list);
 }
 
 void restore_server(server_t *server)
 {
-    int file = open("server.db", O_RDONLY);
+    int file = open(DB_FILE, O_RDONLY);
     int nb = 0;
     user_t *user;
 
     if (file < 0)
         return;
-    read(file, &nb, sizeof(int));
-    for (int i = 0; i < nb; i++)
-        restore_team(server, file);
+    if (!check_header(file, DB_FILE))
+        return (void)close(file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
         user = malloc(sizeof(user_t));
@@ -100,7 +102,6 @@ void restore_server(server_t *server)
         map_add(server->users_by_uuid, user->uuid, user);
         map_add(server->users_by_name, user->name, user);
     }
-    read(file, &nb, sizeof(int));
-    for (int i = 0; i < nb; i++)
-        restore_message(server, file);
+    restore_messages_and_teams(file, server);
+    close(file);
 }

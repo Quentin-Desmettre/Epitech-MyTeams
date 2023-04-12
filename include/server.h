@@ -12,6 +12,7 @@
     #ifndef NO_INCLUDE_TEAMS
         #include "logging_server.h"
     #endif
+    #define DB_FILE "server.db"
 
 // Client
 typedef struct user {
@@ -99,6 +100,21 @@ int run_server(server_t *server);
 void save_server(server_t *server);
 void restore_server(server_t *server);
 void accept_client(server_t *server);
+void restore_team(server_t *server, int file);
+void restore_message_list(server_t *server, int file);
+bool check_header(int fd, char const *db);
+void write_header(char const *db);
+UNUSED static void restore_messages_and_teams(int file, server_t *server)
+{
+    int nb;
+
+    read(file, &nb, sizeof(int));
+    for (int i = 0; i < nb; i++)
+        restore_team(server, file);
+    read(file, &nb, sizeof(int));
+    for (int i = 0; i < nb; i++)
+        restore_message_list(server, file);
+}
 
 // Client
 void handle_client_input(server_t *server, int fd);
@@ -126,6 +142,14 @@ bool thread_exists(const char *name, channel_t *channel);
 bool channel_exists(const char *name, team_t *team);
 bool team_exists(const char *name, server_t *server);
 bool is_user_subscribed(client_t *client, team_t *team);
+<<<<<<< Updated upstream
+=======
+bool is_connected(server_t *server, char *uuid);
+void send_to_client_list(void *packet, list_t *clients, bool free_packet);
+int handle_context(server_t *server, client_t *client);
+const command_handler_t *get_command_handler(client_t *cli);
+bool check_args(char **args, const command_handler_t *handler, client_t *cli);
+>>>>>>> Stashed changes
 
 // Create notifications
 void notify_team_creation(team_t *t, server_t *server, client_t *client);
