@@ -150,8 +150,6 @@ void send_to_client_list(void *packet, list_t *clients, bool free_packet);
 int handle_context(server_t *server, client_t *client);
 const command_handler_t *get_command_handler(client_t *cli);
 bool check_args(char **args, const command_handler_t *handler, client_t *cli);
-bool is_connected(server_t *server, char *uuid);
-void send_to_client_list(void *packet, list_t *clients, bool free_packet);
 
 // Create notifications
 void notify_team_creation(team_t *t, server_t *server, client_t *client);

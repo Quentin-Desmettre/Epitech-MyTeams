@@ -36,9 +36,6 @@ void create_channel(server_t *server, client_t *cli,
     if (strlen(ch_name) > MAX_NAME_LENGTH ||
     strlen(ch_desc) > MAX_DESCRIPTION_LENGTH)
         return send_error(cli, UNKNOWN_COMMAND, "");
-    if (strlen(ch_name) > MAX_NAME_LENGTH ||
-    strlen(ch_desc) > MAX_DESCRIPTION_LENGTH)
-        return send_error(cli, UNKNOWN_COMMAND, "");
     if (!is_user_subscribed(cli, team))
         return send_error(cli, UNAUTHORIZED, "");
     if (channel_exists(ch_name, team))
@@ -60,9 +57,6 @@ void create_thread(server_t *server, client_t *cli,
     channel_t *channel = map_get(team->channels, cli->context.channel);
     thread_t *th;
 
-    if (strlen(th_name) > MAX_NAME_LENGTH ||
-    strlen(th_desc) > MAX_DESCRIPTION_LENGTH)
-        return send_error(cli, UNKNOWN_COMMAND, "");
     if (strlen(th_name) > MAX_NAME_LENGTH ||
     strlen(th_desc) > MAX_DESCRIPTION_LENGTH)
         return send_error(cli, UNKNOWN_COMMAND, "");

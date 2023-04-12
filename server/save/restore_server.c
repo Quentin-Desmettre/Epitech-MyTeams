@@ -84,8 +84,6 @@ void restore_message_list(server_t *server, int file)
         mess = calloc(1, sizeof(user_message_t));
         read(file, mess, sizeof(user_message_t));
         append_node(&list, mess);
-        printf("Message restored: %s (%s -> %s)\n",
-        mess->content, mess->uuid_sender, mess->uuid_receiver);
     }
     map_add(server->messages, uuid_pair, list);
 }
