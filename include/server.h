@@ -12,6 +12,7 @@
     #ifndef NO_INCLUDE_TEAMS
         #include "logging_server.h"
     #endif
+    #define DB_FILE "server.db"
 
 // Constants
 UNUSED static const uint64_t MAGIC_NUMBER = 0x4d797465616d7300;
@@ -104,6 +105,8 @@ void restore_server(server_t *server);
 void accept_client(server_t *server);
 void restore_team(server_t *server, int file);
 void restore_message_list(server_t *server, int file);
+bool check_header(int fd, char const *db);
+void write_header(char const *db);
 UNUSED static void restore_messages_and_teams(int file, server_t *server)
 {
     int nb;
@@ -144,6 +147,9 @@ bool team_exists(const char *name, server_t *server);
 bool is_user_subscribed(client_t *client, team_t *team);
 bool is_connected(server_t *server, char *uuid);
 void send_to_client_list(void *packet, list_t *clients, bool free_packet);
+int handle_context(server_t *server, client_t *client);
+const command_handler_t *get_command_handler(client_t *cli);
+bool check_args(char **args, const command_handler_t *handler, client_t *cli);
 
 // Create notifications
 void notify_team_creation(team_t *t, server_t *server, client_t *client);

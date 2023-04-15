@@ -12,8 +12,8 @@ static void restore_thread(channel_t *channel, int file)
     thread_t *thread = calloc(1, sizeof(thread_t));
     thread_message_t *mess;
     int nb_replies = 0;
-
     read(file, thread->uuid, sizeof(thread->uuid));
+    read(file, thread->uuid_creator, sizeof(thread->uuid_creator));
     read(file, thread->title, sizeof(thread->title));
     read(file, thread->message, sizeof(thread->message));
     read(file, &thread->timestamp, sizeof(time_t));
@@ -84,23 +84,19 @@ void restore_message_list(server_t *server, int file)
         mess = calloc(1, sizeof(user_message_t));
         read(file, mess, sizeof(user_message_t));
         append_node(&list, mess);
-        printf("Message restored: %s (%s -> %s)\n",
-        mess->content, mess->uuid_sender, mess->uuid_receiver);
     }
     map_add(server->messages, uuid_pair, list);
 }
 
 void restore_server(server_t *server)
 {
-    int file = open("server.db", O_RDONLY);
+    int file = open(DB_FILE, O_RDONLY);
     int nb = 0;
     user_t *user;
-    uint64_t magic_number;
 
     if (file < 0)
         return;
-    read(file, &magic_number, sizeof(uint64_t));
-    if (magic_number != MAGIC_NUMBER)
+    if (!check_header(file, DB_FILE))
         return (void)close(file);
     read(file, &nb, sizeof(int));
     for (int i = 0; i < nb; i++) {
@@ -111,4 +107,5 @@ void restore_server(server_t *server)
         map_add(server->users_by_name, user->name, user);
     }
     restore_messages_and_teams(file, server);
+    close(file);
 }

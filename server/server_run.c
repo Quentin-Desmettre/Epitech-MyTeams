@@ -45,27 +45,18 @@ char **get_request_arguments(void *request, size_t buf_size, int nb_args)
     return args;
 }
 
-void handle_request(server_t *server, client_t *client)
+void handle_request(server_t *server, client_t *cli)
 {
-    uint8_t cmd_id = ((uint8_t *)client->buffer)[8];
     char **args = NULL;
     const command_handler_t *handler;
-    if (cmd_id >= NB_COMMANDS)
-        return clear_client_buffer(client),
-        send_error(client, UNKNOWN_COMMAND, "");
-    handler = &COMMANDS[cmd_id];
-    args = get_request_arguments(client->buffer,
-        client->buf_size, handler->nb_args);
-    clear_client_buffer(client);
-    if (!args && handler->nb_args != 0)
-        return send_error(client, UNKNOWN_COMMAND, "");
-    if (handler->requires_login && !client->logged_in)
-        return send_error(client, UNAUTHORIZED, "");
-    for (int i = 0; i < 3 && args && args[i]; i++)
-        if (MAX_ARG_SIZES_FOR_REQUEST[cmd_id][i] >= 0 &&
-        (long int)strlen(args[i]) > MAX_ARG_SIZES_FOR_REQUEST[cmd_id][i])
-            return send_error(client, UNKNOWN_COMMAND, "");
-    handler->handler(server, client, args);
+
+    handler = get_command_handler(cli);
+    if (!handler)
+        return;
+    args = get_request_arguments(cli->buffer, cli->buf_size, handler->nb_args);
+    if (!check_args(args, handler, cli))
+        return;
+    handler->handler(server, cli, args);
     free_str_array(args);
 }
 

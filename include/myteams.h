@@ -70,9 +70,9 @@ typedef struct thread_message {
 } thread_message_t;
 
 typedef struct user_context {
-    team_t *team;
-    channel_t *channel;
-    thread_t *thread;
+    char *team;
+    char *channel;
+    char *thread;
 } user_context_t;
 
 typedef struct message {
@@ -220,7 +220,6 @@ void free_str_array(char **array);
 void append_str_array(char ***array, char *what);
 void *memdup(void *src, size_t size);
 void generate_uuid(char uuid[R_UUID_LENGTH]);
-char **strarr(char *str, char *delim);
 
 // Packet
 void append_arg_to_packet(void **packet, const void *arg, uint16_t arg_len);
