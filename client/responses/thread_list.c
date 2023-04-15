@@ -15,7 +15,7 @@ void client_receiver_thread_created_g(client_t *client)
     char *thread_title = NULL;
     char *thread_body = NULL;
 
-    if (!read_packet(client->buffer, "ssts", &thread_uuid, &user_uuid,
+    if (!read_packet(client->buffer, "sstss", &thread_uuid, &user_uuid,
         &thread_timestamp, &thread_title, &thread_body))
         return;
     client_event_thread_created(thread_uuid, user_uuid, thread_timestamp,
@@ -30,7 +30,7 @@ void client_receiver_thread_created_u(client_t *client)
     char *thread_title = NULL;
     char *thread_body = NULL;
 
-    if (!read_packet(client->buffer, "ssts", &thread_uuid, &user_uuid,
+    if (!read_packet(client->buffer, "sstss", &thread_uuid, &user_uuid,
         &thread_timestamp, &thread_title, &thread_body))
         return;
     client_print_thread_created(thread_uuid, user_uuid, thread_timestamp,
