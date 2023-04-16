@@ -67,18 +67,18 @@ static void list_thread_replies(server_t *s, client_t *client)
     thread_t *thread = map_get(channel->threads, client->context.thread);
     void *packet = create_packet(EV_LIST_REPLIES, NULL, NULL, 0);
     list_t *replies = thread->replies;
-    thread_message_t *reply;
+    thread_message_t *rep;
     const char *thread_uuid = thread->uuid;
 
     if (!replies)
         return send_packet(packet, client->fd, true);
     do {
-        reply = replies->data;
-        append_arg_to_packet(&packet, thread_uuid, sizeof(thread_uuid));
+        rep = replies->data;
+        append_arg_to_packet(&packet, thread_uuid, strlen(thread_uuid) + 1);
         append_arg_to_packet(&packet,
-        reply->uuid_sender, sizeof(reply->uuid_sender));
-        append_arg_to_packet(&packet, &reply->timestamp, sizeof(time_t));
-        append_arg_to_packet(&packet, reply->content, sizeof(reply->content));
+        rep->uuid_sender, strlen(rep->uuid_sender) + 1);
+        append_arg_to_packet(&packet, &rep->timestamp, sizeof(time_t));
+        append_arg_to_packet(&packet, rep->content, strlen(rep->content) + 1);
         replies = replies->next;
     } while (replies != thread->replies);
     send_packet(packet, client->fd, true);

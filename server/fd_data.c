@@ -20,9 +20,17 @@ void disconnect_client(server_t *server, int fd)
 
 void clear_client_buffer(client_t *client)
 {
-    free(client->buffer);
-    client->buffer = NULL;
-    client->buf_size = 0;
+    size_t packet_size = *(size_t *)client->buffer;
+
+    if (client->buf_size > packet_size) {
+        client->buf_size -= packet_size;
+        memmove(client->buffer, client->buffer + packet_size, client->buf_size);
+        client->buffer = realloc(client->buffer, client->buf_size);
+    } else if (client->buf_size == packet_size) {
+        client->buf_size = 0;
+        free(client->buffer);
+        client->buffer = NULL;
+    }
 }
 
 void fd_data_init(server_t *server)

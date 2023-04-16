@@ -89,7 +89,7 @@ def signal_handler(signum, frame):
     exit(1)
 
 signal.signal(signal.SIGALRM, signal_handler)
-signal.alarm(5)   # 30 seconds
+signal.alarm(30)   # 30 seconds
 try:
     checkCodingStyle()
 except Exception as e:

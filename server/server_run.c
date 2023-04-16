@@ -50,14 +50,21 @@ void handle_request(server_t *server, client_t *cli)
     char **args = NULL;
     const command_handler_t *handler;
 
-    handler = get_command_handler(cli);
-    if (!handler)
-        return;
-    args = get_request_arguments(cli->buffer, cli->buf_size, handler->nb_args);
-    if (!check_args(args, handler, cli))
-        return;
-    handler->handler(server, cli, args);
-    free_str_array(args);
+    while (cli->buf_size >= 8 && cli->buf_size >= *(size_t *)cli->buffer) {
+        handler = get_command_handler(cli);
+        if (!handler)
+            continue;
+        args = get_request_arguments(cli->buffer,
+        cli->buf_size, handler->nb_args);
+        if (!check_args(args, handler, cli))
+            continue;
+        handler->handler(server, cli, args);
+        free_str_array(args);
+    }
+    if (cli->buf_size == 0) {
+        free(cli->buffer);
+        cli->buffer = NULL;
+    }
 }
 
 void handle_client_input(server_t *server, int fd)
