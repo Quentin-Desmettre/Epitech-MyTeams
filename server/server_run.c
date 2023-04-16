@@ -54,7 +54,8 @@ void handle_request(server_t *server, client_t *cli)
         handler = get_command_handler(cli);
         if (!handler)
             continue;
-        args = get_request_arguments(cli->buffer, cli->buf_size, handler->nb_args);
+        args = get_request_arguments(cli->buffer,
+        cli->buf_size, handler->nb_args);
         if (!check_args(args, handler, cli))
             continue;
         handler->handler(server, cli, args);
