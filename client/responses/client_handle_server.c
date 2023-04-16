@@ -16,28 +16,28 @@ static void handle_action(client_t *client)
         printf("Invalid command id: %d\n", cmd_id);
         return;
     }
-
     handler = &RESPONSES[cmd_id];
     handler->func(client);
 }
 
 static void handle_server_return(client_t *client)
 {
-    size_t currPacket = *(size_t *)client->buffer;
-    size_t tmp;
+    size_t packet_size;
 
-    while (currPacket <= client->buf_size) {
+    while (1) {
+        packet_size = *(size_t *)client->buffer;
         handle_action(client);
         memmove(client->buffer,
-        client->buffer + currPacket, client->buf_size - currPacket);
-        tmp = *(size_t *)(client->buffer + currPacket);
-        if (tmp == 0)
+        client->buffer + packet_size, client->buf_size - packet_size);
+        client->buf_size -= packet_size;
+        client->buffer = realloc(client->buffer, client->buf_size);
+        if (client->buf_size < 8)
             break;
-        currPacket += tmp;
     }
-    free(client->buffer);
-    client->buffer = NULL;
-    client->buf_size = 0;
+    if (client->buf_size == 0) {
+        free(client->buffer);
+        client->buffer = NULL;
+    }
 }
 
 int client_read(client_t *client)
