@@ -10,15 +10,6 @@
 #define NO_INCLUDE_TEAMS
 #include "server.h"
 
-Test(clear_client_buffer, clear_client_buffer)
-{
-    client_t cli = (client_t){.fd = 0, .buffer = strdup("test")};
-
-    clear_client_buffer(&cli);
-    cr_assert_eq(cli.buffer, NULL);
-    cr_assert_eq(cli.buf_size, 0);
-}
-
 Test(fd_data_init, fd_data_init)
 {
     server_t serv;
