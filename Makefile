@@ -5,14 +5,66 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
-
 SRCDIR_SERVER = server
 SRCDIR_CLIENT = client
-SRC_COM = common
+SRCDIR_COMMON = common
 
-SRC_SERVER = $(call rwildc,$(SRCDIR_SERVER),*.c) $(call rwildc,$(SRC_COM),*.c)
-SRC_CLIENT = $(call rwildc,$(SRCDIR_CLIENT),*.c) $(call rwildc,$(SRC_COM),*.c)
+SRCS_COM = 	compare.c                 \
+          	strings.c                 \
+          	packet.c                  \
+          	read_packet.c             \
+          	linked_list/linked_list.c \
+          	map/map.c                 \
+          	my_write.c                \
+
+SRC_COM = $(addprefix $(SRCDIR_COMMON)/, $(SRCS_COM))
+
+SRCS_SERVER = server_run.c              \
+             	server_init.c             \
+             	fd_data.c                 \
+             	responses/errors.c        \
+             	send_to_user.c            \
+             	main.c                    \
+             	free.c                    \
+             	save/restore_server.c     \
+             	save/save_server.c        \
+             	handlers/login_out.c      \
+             	handlers/list.c           \
+             	handlers/subscribe.c      \
+             	handlers/send.c           \
+             	handlers/subscribed.c     \
+             	handlers/user.c           \
+             	handlers/info.c           \
+             	handlers/create.c         \
+             	handlers/use.c            \
+             	handlers/create_utility.c \
+             	handlers/create_notify.c  \
+             	handlers/help.c           \
+             	handlers/messages.c       \
+
+SRCS_CLIENT = 	client_input.c                    \
+             	client_init.c                     \
+             	responses/team_channel_interact.c \
+             	responses/responses_misc.c        \
+             	responses/thread_list.c           \
+             	responses/connection_receiver.c   \
+             	responses/responses_list.c        \
+             	responses/reply.c                 \
+             	responses/responses_unknown.c     \
+             	responses/responses_info.c        \
+             	responses/client_handle_server.c  \
+             	main.c                            \
+             	client_run.c                      \
+             	Command/infos.c                   \
+             	Command/connection.c              \
+             	Command/jai_pas_trouver_de_nom.c  \
+             	Command/interraction.c            \
+
+SRC_SERVER = $(addprefix $(SRCDIR_SERVER)/, $(SRCS_SERVER))
+SRC_CLIENT = $(addprefix $(SRCDIR_CLIENT)/, $(SRCS_CLIENT))
+
+SRC_SERVER += $(SRC_COM)
+SRC_CLIENT += $(SRC_COM)
 
 CLIENT_NAME = myteams_cli
 SERVER_NAME = myteams_server
