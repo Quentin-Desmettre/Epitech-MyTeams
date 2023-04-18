@@ -39,6 +39,13 @@
     #define UUID_PAIR_LEN (UUID_LENGTH * 2 + 1)
     #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
+typedef struct {
+    void *raw_packet;
+    int dest_fd;
+    bool free_packet;
+    bool is_sent;
+} packet_t;
+
 typedef struct team {
     char uuid[R_UUID_LENGTH];
     char name[MAX_NAME_LENGTH + 1];
@@ -248,5 +255,8 @@ bool read_packet(void *packet, const char *params, ...);
  * @return list_t* if it worked, else NULL in case of error
  */
 list_t *read_packet_list(void *packet, char const *packet_content);
+list_t **packet_list(void);
+void handle_output(int fd);
+void update_list(int fd);
 
 #endif //EPITECH_MYTEAMS_MYTEAMS_H

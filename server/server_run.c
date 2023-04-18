@@ -92,19 +92,22 @@ void handle_client_input(server_t *server, int fd)
 int run_server(server_t *server)
 {
     int fd;
+    bool is_write;
 
     while (server->run) {
         fd_data_init(server);
-        if (select(server->fd_data.max_fd + 1, &server->fd_data.read_set,
-            NULL, NULL, NULL) == -1)
+        if (select(FD_SETSIZE, &server->fd_data.read_set,
+            &server->fd_data.write_set, NULL, NULL) == -1)
             continue;
-        fd = get_first_input_available(&server->fd_data, server);
-        if (fd == server->fd)
+        fd = get_first_input_available(&server->fd_data, server, &is_write);
+        if (fd == server->fd) {
             accept_client(server);
-        else {
+            continue;
+        } if (!is_write) {
             handle_client_input(server, fd);
             save_server(server);
-        }
+        } else
+            handle_output(fd);
     }
     return 0;
 }

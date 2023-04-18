@@ -6,21 +6,20 @@
 */
 
 #include "client.h"
-#include "math.h"
 
 void get_string(char ***args, int opened_quotes, int length, char cpy)
 {
     int tmp;
 
     if (length == -1) {
-        tmp = ceil(opened_quotes / 2) + 1;
+        tmp = opened_quotes / 2 + 1;
         (*args) = realloc((*args), sizeof(char *) * (tmp + 2));
         (*args)[tmp] = realloc((*args)[tmp], 1);
         (*args)[tmp][0] = '\0';
         (*args)[tmp + 1] = NULL;
         return;
     }
-    tmp = ceil(opened_quotes / 2) + 1;
+    tmp = opened_quotes / 2 + 1;
     (*args) = realloc((*args), sizeof(char *) * (tmp + 2));
     (*args)[tmp] = realloc((*args)[tmp], length + 2);
     (*args)[tmp][length] = cpy;

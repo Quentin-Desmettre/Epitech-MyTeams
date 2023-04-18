@@ -137,7 +137,8 @@ void send_error(client_t *client, uint8_t code, const char *message);
 
 // Fd sets
 void fd_data_init(server_t *server);
-int get_first_input_available(fd_data_t *data, server_t *server);
+int get_first_input_available(fd_data_t *data,
+                                server_t *server, bool *is_write);
 void remove_fd_from_array(int **array, int *len, int fd);
 
 // Utility

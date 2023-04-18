@@ -17,6 +17,7 @@ void notify_team_creation(team_t *t, server_t *server, client_t *client)
     for (int i = 0; i < server->clients_by_uuid->size; i++)
         send_to_client_list(packet,
         server->clients_by_uuid->elems[i].value, false);
+    packet = memdup(packet, *(uint64_t *)packet);
     ((uint8_t *)packet)[8] = U_TEAM_CREATED;
     send_packet(packet, client->fd, true);
 }
@@ -45,6 +46,7 @@ void notify_channel_creation(channel_t *ch, server_t *server, client_t *client)
     append_arg_to_packet(&packet,
         ch->description, strlen(ch->description) + 1);
     notify_team(packet, t, server);
+    packet = memdup(packet, *(uint64_t *)packet);
     ((uint8_t *)packet)[8] = U_CHANNEL_CREATED;
     send_packet(packet, client->fd, true);
 }
@@ -61,6 +63,7 @@ void notify_thread_creation(thread_t *th, server_t *server, client_t *client)
     append_arg_to_packet(&packet, th->title, strlen(th->title) + 1);
     append_arg_to_packet(&packet, th->message, strlen(th->message) + 1);
     notify_team(packet, t, server);
+    packet = memdup(packet, *(uint64_t *)packet);
     ((uint8_t *)packet)[8] = U_THREAD_CREATED;
     send_packet(packet, client->fd, true);
 }

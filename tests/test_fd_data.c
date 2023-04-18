@@ -18,7 +18,6 @@ Test(fd_data_init, fd_data_init)
     serv.client_fds = memdup((int[3]){0, 1, 2}, sizeof(int) * 3);
     fd_data_init(&serv);
     cr_assert_eq(serv.fd, 3);
-    cr_assert_eq(serv.fd_data.max_fd, 3);
 }
 
 Test (remove_fd_from_array, remove_fd_from_array)
