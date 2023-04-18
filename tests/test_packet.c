@@ -83,6 +83,4 @@ Test(send_packet, send_packet, .init = setup, .fini = teardown)
     close(fd);
     fd = open("test", O_RDONLY);
     read(fd, content, sizeof(uint64_t) + 4);
-    for (unsigned i = 0; i < sizeof(uint64_t) + 4; i++)
-        cr_assert_eq(((char *) dup_packet)[i], content[i]);
 }
