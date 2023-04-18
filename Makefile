@@ -28,6 +28,7 @@ SRCS_SERVER = server_run.c              \
              	free.c                    \
              	save/restore_server.c     \
              	save/save_server.c        \
+             	save/header.c             \
              	handlers/login_out.c      \
              	handlers/list.c           \
              	handlers/subscribe.c      \
