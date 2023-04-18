@@ -51,7 +51,6 @@ void login_handler(server_t *server, client_t *client, char **args)
         cli = server->clients_by_uuid->elems[i].value;
         send_to_client_list(packet, cli, false);
     }
-    free(packet);
 }
 
 static void remove_client_from_list(map_t *map, char *uuid, int client_fd)
@@ -87,7 +86,6 @@ void logout_handler(server_t *server, client_t *client, UNUSED char **args)
         cli = server->clients_by_uuid->elems[i].value;
         send_to_client_list(packet, cli, false);
     }
-    free(packet);
     server_event_user_logged_out(user->uuid);
     client->logged_in = false;
     client->user = NULL;

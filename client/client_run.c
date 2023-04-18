@@ -44,18 +44,23 @@ int client_input_handling(char **input, client_t *client)
 void client_run(client_t *client)
 {
     char *input = NULL;
-    fd_set readfds;
+    fd_set readfds, writefds;
 
     while (1) {
         FD_ZERO(&readfds);
+        FD_ZERO(&writefds);
+        if (*packet_list())
+            FD_SET(client->socketFd, &writefds);
         FD_SET(client->socketFd, &readfds);
         FD_SET(0, &readfds);
-        if (select(FD_SETSIZE, &readfds, NULL, NULL, NULL) == -1)
+        if (select(FD_SETSIZE, &readfds, &writefds, NULL, NULL) == -1)
             break;
         if (FD_ISSET(client->socketFd, &readfds) && client_read(client))
             break;
         if (FD_ISSET(0, &readfds) && client_input_handling(&input, client))
             break;
+        if (FD_ISSET(client->socketFd, &writefds))
+            handle_output(client->socketFd);
     }
     free(input);
 }

@@ -30,28 +30,19 @@ void *create_packet(int code, const void **args,
     return packet;
 }
 
-bool has_disconnected(int fd)
+list_t **packet_list(void)
 {
-    fd_set readfds;
-    struct timeval timeout = {
-        .tv_sec = 0,
-        .tv_usec = 10000,
-    };
+    static list_t *list = NULL;
 
-    FD_ZERO(&readfds);
-    FD_SET(fd, &readfds);
-    if (select(FD_SETSIZE, &readfds, NULL, NULL, &timeout) <= 0)
-        return false;
-    if (bytes_available(fd) == 0)
-        return true;
-    return false;
+    return &list;
 }
 
 void send_packet(void *packet, int fd, bool to_free)
 {
-    if (has_disconnected(fd))
-        return;
-    safe_write(fd, packet, ((uint64_t *)packet)[0]);
-    if (to_free)
-        free(packet);
+    packet_t *p = calloc(sizeof(packet_t), 1);
+
+    p->raw_packet = packet;
+    p->dest_fd = fd;
+    p->free_packet = to_free;
+    append_node(packet_list(), p);
 }

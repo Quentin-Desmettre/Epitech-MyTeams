@@ -7,7 +7,8 @@
 
 #include "server.h"
 
-void send_to_client_list(void *packet, list_t *clients, bool free_packet)
+void send_to_client_list(void *packet,
+                            list_t *clients, UNUSED bool free_packet)
 {
     list_t * const begin = clients;
     client_t *c;
@@ -20,6 +21,4 @@ void send_to_client_list(void *packet, list_t *clients, bool free_packet)
             send_packet(packet, c->fd, false);
         clients = clients->next;
     } while (clients != begin);
-    if (free_packet)
-        free(packet);
 }
